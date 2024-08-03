@@ -4,7 +4,8 @@ import { Button, Input, InputRef, message, Popconfirm, Space, Table, TableColumn
 import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import { CollectionType } from "../../lib/types";
-import axios from "axios";
+import { useCookies } from "react-cookie";
+import { deleteCollection } from "../../lib/actions";
 
 type DataIndex = keyof CollectionType;
 
@@ -17,6 +18,7 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef<InputRef>(null);
+  const [cookies] = useCookies();
 
   const handleSearch = (selectedKeys: string[], confirm: FilterDropdownProps["confirm"], dataIndex: DataIndex) => {
     confirm();
@@ -24,10 +26,12 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
     setSearchedColumn(dataIndex);
   };
 
+  console.log(dataSource);
+
   const handleDelete = async (key: React.Key) => {
-    console.log(key);
+    // console.log(key);
     try {
-      const res = await axios.delete(`/collections/${key}`);
+      const res = await deleteCollection(Number(key), cookies);
       if (res.status === 200) {
         message.success("删除成功");
       }
@@ -142,14 +146,14 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
         </p>
       ),
     },
-    // {
-    //   title: "产品数量",
-    //   dataIndex: "products",
-    //   key: "products",
-    //   sorter: (a) => a.products.length,
-    //   sortDirections: ["descend", "ascend"],
-    //   render: (products) => products.length,
-    // },
+    {
+      title: "产品数量",
+      dataIndex: "products",
+      key: "products",
+      sorter: (a) => a.products?.length,
+      sortDirections: ["descend", "ascend"],
+      render: (products) => products?.length,
+    },
     {
       title: "操作",
       dataIndex: "operation",

@@ -90,6 +90,18 @@ export const updateCollection = async (collectionId: number, newCollection: Coll
   }
 };
 
+export const deleteCollection = async (collectionId: number, cookies: CookiesType) => {
+  try {
+    axios.defaults.headers.common = {
+      Authorization: `${cookies.Authorization}`,
+    };
+    return await axios.delete(`/collections/${collectionId}`);
+  } catch (err) {
+    console.log("[deleteCollection_DELETE]...", err);
+    return Promise.reject(err);
+  }
+};
+
 export const getProducts = async () => {
   try {
     return await axios.get("/products");
@@ -137,6 +149,18 @@ export const updateProduct = async (productId: number, product: ProductType, coo
     return await axios.put(`/products/${productId}`, product);
   } catch (err) {
     console.log("[editProduct_PUT]...", err);
+    return Promise.reject(err);
+  }
+};
+
+export const deleteProduct = async (productId: number, cookies: CookiesType) => {
+  try {
+    axios.defaults.headers.common = {
+      Authorization: `${cookies.Authorization}`,
+    };
+    return await axios.delete(`/products/${productId}`);
+  } catch (err) {
+    console.log("[deleteProduct_DELETE]...", err);
     return Promise.reject(err);
   }
 };

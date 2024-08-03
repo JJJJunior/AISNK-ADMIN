@@ -17,6 +17,7 @@ export interface CollectionType {
   title: string;
   description: string;
   status: string;
+  products: ProductType[];
   fileList: UploadFile[];
   createdAt: string; // ISO Date string
   updatedAt: string; // ISO Date string

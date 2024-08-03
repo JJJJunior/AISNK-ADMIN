@@ -4,7 +4,8 @@ import { Button, Input, InputRef, message, Popconfirm, Space, Table, TableColumn
 import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import { ProductType } from "../../lib/types";
-import axios from "axios";
+import { useCookies } from "react-cookie";
+import { deleteProduct } from "../../lib/actions";
 
 type DataIndex = keyof ProductType;
 
@@ -17,6 +18,7 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef<InputRef>(null);
+  const [cookies] = useCookies();
 
   const handleSearch = (selectedKeys: string[], confirm: FilterDropdownProps["confirm"], dataIndex: DataIndex) => {
     confirm();
@@ -25,9 +27,9 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
   };
 
   const handleDelete = async (key: React.Key) => {
-    console.log(key);
+    // console.log(key);
     try {
-      const res = await axios.delete(`/products/${key}`);
+      const res = await deleteProduct(Number(key), cookies);
       if (res.status === 200) {
         message.success("删除成功");
       }
