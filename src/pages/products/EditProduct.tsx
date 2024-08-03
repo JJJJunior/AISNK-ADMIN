@@ -10,6 +10,8 @@ import { useCookies } from "react-cookie";
 import { ProductStatusType } from "../../lib/types";
 import { getCollections, getProductStatus, updateProduct, getProductDetails } from "../../lib/actions";
 import { useParams } from "react-router-dom";
+import SortableList, { SortableItem } from "react-easy-sort";
+import arrayMoveImmutable from "array-move";
 
 const EditProduct: React.FC = () => {
   const [form] = Form.useForm();
@@ -20,6 +22,10 @@ const EditProduct: React.FC = () => {
   const [cookies] = useCookies<any>();
   const [status, setStatus] = useState<ProductStatusType[] | null>(null);
   const { productId } = useParams();
+
+  const onSortEnd = (oldIndex: number, newIndex: number) => {
+    setFileList((array) => arrayMoveImmutable(array, oldIndex, newIndex));
+  };
 
   const fetchCollections = async () => {
     try {
@@ -187,28 +193,30 @@ const EditProduct: React.FC = () => {
         >
           <UploadImages setFileList={setFileList} fileList={fileList} />
         </Form.Item>
-        <div className="flex flex-wrap gap-4">
+        <SortableList onSortEnd={onSortEnd} className="flex flex-wrap gap-4" draggedItemClassName="dragged">
           {fileList.length > 0 &&
             fileList.map((item, index) => (
-              <div key={index} className="flex relative">
-                <div className="h-42 w-36">
-                  <img
-                    src={item.response?.url}
-                    alt={item.name}
-                    width={200}
-                    height={300}
-                    className="rounded-xl border shadow-lg"
-                  />
+              <SortableItem key={item}>
+                <div key={index} className="flex relative">
+                  <div className="h-42 w-36">
+                    <img
+                      src={item.response?.url}
+                      alt={item.name}
+                      width={200}
+                      height={300}
+                      className="rounded-xl border shadow-lg"
+                    />
+                  </div>
+                  <button
+                    onClick={(evt) => handRemoveImageBtn(evt, item)}
+                    className="absolute right-2 top-2 text-2xl text-gray-400 hover:text-red-600"
+                  >
+                    <CloseSquareOutlined />
+                  </button>
                 </div>
-                <button
-                  onClick={(evt) => handRemoveImageBtn(evt, item)}
-                  className="absolute right-2 top-2 text-2xl text-gray-400 hover:text-red-600"
-                >
-                  <CloseSquareOutlined />
-                </button>
-              </div>
+              </SortableItem>
             ))}
-        </div>
+        </SortableList>
         <Form.Item label="产品描述" name="description" rules={[{ required: true, message: "产品描述不能为空" }]}>
           <Input.TextArea rows={6} />
         </Form.Item>
