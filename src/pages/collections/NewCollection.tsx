@@ -68,6 +68,7 @@ const NewCollection: React.FC = () => {
   const onSortEnd = (oldIndex: number, newIndex: number) => {
     setFileList((array) => arrayMoveImmutable(array, oldIndex, newIndex));
   };
+
   return (
     <div>
       <Form form={form} onFinish={onFinish} layout="vertical">
