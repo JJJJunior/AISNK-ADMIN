@@ -77,6 +77,7 @@ const EditProduct: React.FC = () => {
   const onFinish = async (values: any) => {
     const newProduct: ProductType = {
       ...values,
+      discount: values.discount === 0 || values.discount === undefined ? 1 : values.discount,
       size_image: sizeImage,
       fileList: fileList.map((file, index) => ({ ...file, order_index: index + 1 })),
       colors: replaceSymbolsInTags(values.colors),
