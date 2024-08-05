@@ -27,6 +27,7 @@ const items: MenuItem[] = [
   { key: "/customers", icon: <ContainerOutlined />, label: "客户管理" },
   { key: "/orders", icon: <ContainerOutlined />, label: "订单管理" },
   { key: "/users", icon: <ContainerOutlined />, label: "用户管理" },
+  { key: "/logout", icon: <ContainerOutlined />, label: "退出登录" },
 ];
 
 const App: React.FC = () => {
@@ -36,10 +37,14 @@ const App: React.FC = () => {
 
   const [current, setCurrent] = useState("1");
   const onClick: MenuProps["onClick"] = (e) => {
+    if (e.key === "/logout") {
+      logout();
+      return;
+    }
     setCurrent(e.key);
     navigate(e.key);
   };
-  const { user, loading } = useAuth();
+  const { user, loading, logout } = useAuth();
   // console.log(user)
   const navigate = useNavigate();
   const pathname = window.location.pathname;
@@ -71,7 +76,7 @@ const App: React.FC = () => {
         />
       </Sider>
       <Layout style={{ marginInlineStart: 200 }}>
-        <Header style={{ padding: 0, background: colorBgContainer }} />
+        <Header style={{ padding: 0, background: colorBgContainer }}></Header>
         <Content style={{ margin: "24px 16px 0", overflow: "initial" }}>
           <div
             style={{
@@ -85,7 +90,9 @@ const App: React.FC = () => {
             <Outlet />
           </div>
         </Content>
-        <Footer style={{ textAlign: "center" }}>Ant Design ©{new Date().getFullYear()} Created by Ant UED</Footer>
+        <Footer style={{ textAlign: "center" }}>
+          Copyright ©{new Date().getFullYear()} AISNK All rights reserved.
+        </Footer>
       </Layout>
     </Layout>
   );

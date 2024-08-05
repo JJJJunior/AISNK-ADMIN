@@ -1,12 +1,12 @@
 import React from "react";
 import { UploadOutlined } from "@ant-design/icons";
 import { Button, Upload } from "antd";
-import ImgCrop from "antd-img-crop";
-import type { UploadFile, UploadProps } from "antd";
+import type { UploadProps } from "antd";
+import { FileListType } from "../lib/types";
 
 interface UploadImagesProps {
-  fileList: UploadFile[];
-  setFileList: () => void;
+  fileList: FileListType[];
+  setFileList: React.Dispatch<React.SetStateAction<FileListType[]>>;
 }
 
 const UploadImages: React.FC<UploadImagesProps> = ({ setFileList, fileList }) => {
@@ -15,13 +15,18 @@ const UploadImages: React.FC<UploadImagesProps> = ({ setFileList, fileList }) =>
   };
 
   return (
-    <ImgCrop rotationSlider>
-      <Upload action={`${import.meta.env.VITE_API_URL}/upload`} withCredentials fileList={fileList} onChange={onChange}>
-        <Button onClick={(evt) => evt.preventDefault()} icon={<UploadOutlined />}>
-          点击上传最多6张
-        </Button>
-      </Upload>
-    </ImgCrop>
+    <Upload
+      maxCount={12}
+      action={`${import.meta.env.VITE_API_URL}/upload`}
+      withCredentials
+      fileList={fileList}
+      multiple
+      onChange={onChange}
+    >
+      <Button onClick={(evt) => evt.preventDefault()} icon={<UploadOutlined />} disabled={fileList.length > 11}>
+        点击上传最多12张
+      </Button>
+    </Upload>
   );
 };
 

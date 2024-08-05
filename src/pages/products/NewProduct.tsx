@@ -1,25 +1,29 @@
 import React, { useState, useEffect } from "react";
 import UploadImages from "../../components/UploadImages";
-import { Button, Form, Input, InputNumber, Select, Spin } from "antd";
+import { Button, Form, Image, Input, InputNumber, Select, Spin } from "antd";
 import { CloseSquareOutlined, LoadingOutlined } from "@ant-design/icons";
-import { CollectionType, ProductType } from "../../lib/types";
+import { CollectionType, FileListType, ProductType } from "../../lib/types";
 import { message } from "antd";
 import { useNavigate } from "react-router-dom";
-import { UploadFile } from "antd/lib";
-import { useCookies } from "react-cookie";
 import { ProductStatusType } from "../../lib/types";
 import { getCollections, getProductStatus, addProduct } from "../../lib/actions";
+import { UploadFile } from "antd/lib";
 import SortableList, { SortableItem } from "react-easy-sort";
 import arrayMoveImmutable from "array-move";
+import UploadOne from "../../components/UploadOne";
 
 const NewProduct: React.FC = () => {
   const [form] = Form.useForm();
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [fileList, setFileList] = useState<FileListType[]>([]);
   const [collections, setCollections] = useState<CollectionType[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const [cookies] = useCookies<any>();
   const [status, setStatus] = useState<ProductStatusType[] | null>(null);
+  const [sizeImage, setSizeImage] = useState("");
+
+  const onSortEnd = (oldIndex: number, newIndex: number) => {
+    setFileList((array) => arrayMoveImmutable(array, oldIndex, newIndex));
+  };
 
   const fetchCollections = async () => {
     try {
@@ -34,6 +38,7 @@ const NewProduct: React.FC = () => {
       const res = await getProductStatus();
       if (res.status === 200) {
         setStatus(res.data.data);
+        setSizeImage(res.data.data.size_image);
       }
     } catch (err) {
       console.log("[fetchProductStatus_GET]...", err);
@@ -45,25 +50,26 @@ const NewProduct: React.FC = () => {
     fetchProductStatus();
   }, []);
 
-  const onSortEnd = (oldIndex: number, newIndex: number) => {
-    setFileList((array) => arrayMoveImmutable(array, oldIndex, newIndex));
-  };
-
   const onFinish = async (values: any) => {
     const newProduct: ProductType = {
       ...values,
-      fileList,
-      colors: replaceSymbols(values.colors),
+      size_image: sizeImage,
+      fileList: fileList.map((file, index) => ({ ...file, order_index: index + 1 })),
+      colors: replaceSymbolsInTags(values.colors),
       sizes: replaceSymbols(values.sizes),
       tags: replaceSymbolsInTags(values.tags),
       collections: values.collections
         .map((id: string) => collections.find((collection) => collection.id === id))
         .filter(Boolean),
     };
-    console.log("Received values of form: ", newProduct);
+    if (newProduct.fileList.length === 0) {
+      message.error("请上传至少一张图片");
+      return;
+    }
+    // console.log("Received values of form: ", newProduct);
     setLoading(true);
     try {
-      const res = await addProduct(newProduct, cookies);
+      const res = await addProduct(newProduct);
       if (res.status === 200) {
         message.success("创建产品成功");
         navigate("/products");
@@ -149,6 +155,11 @@ const NewProduct: React.FC = () => {
               <InputNumber min={0} />
             </Form.Item>
           </Form.Item>
+          <Form.Item label="折扣 (0.8 = 8折)">
+            <Form.Item name="discount" noStyle>
+              <InputNumber min={0} />
+            </Form.Item>
+          </Form.Item>
           <Form.Item label="库存">
             <Form.Item name="stock" noStyle>
               <InputNumber min={0} />
@@ -174,7 +185,7 @@ const NewProduct: React.FC = () => {
         <SortableList onSortEnd={onSortEnd} className="flex flex-wrap gap-4" draggedItemClassName="dragged">
           {fileList.length > 0 &&
             fileList.map((item, index) => (
-              <SortableItem key={item}>
+              <SortableItem key={index}>
                 <div key={index} className="flex relative">
                   <div className="h-42 w-36">
                     <img
@@ -198,7 +209,24 @@ const NewProduct: React.FC = () => {
         <Form.Item label="产品描述" name="description" rules={[{ required: true, message: "产品描述不能为空" }]}>
           <Input.TextArea rows={6} />
         </Form.Item>
-        <div className="grid grid-cols-3 justify-center gap-4">
+        <Form.Item label="尺码表" valuePropName="点击上传尺码表">
+          <UploadOne setSizeImage={setSizeImage} />
+        </Form.Item>
+        {sizeImage && (
+          <div className="flex justify-start">
+            <Image src={sizeImage} alt="尺码表" width={100} height={100} className="rounded-xl border shadow-lg" />
+            <button
+              onClick={(evt) => {
+                evt.preventDefault();
+                setSizeImage("");
+              }}
+              className="right-2 top-2 text-2xl text-gray-400 hover:text-red-600"
+            >
+              <CloseSquareOutlined />
+            </button>
+          </div>
+        )}
+        <div className="grid grid-cols-3 justify-center gap-4 mt-4">
           <Form.Item label="上线栏目" name="collections" rules={[{ required: true, message: "栏目不能为空" }]}>
             <Select placeholder="选择栏目" mode="multiple">
               {collections.length > 0 &&
@@ -213,13 +241,13 @@ const NewProduct: React.FC = () => {
             <Input />
           </Form.Item>
           <Form.Item label="颜色" name="colors">
-            <Input placeholder="比如：red、yellow、blue 仅支持逗号、顿号、空格进行分隔" />
+            <Input placeholder="比如：red，yellow，blue 仅支持逗号进行分隔" />
           </Form.Item>
           <Form.Item label="尺寸" name="sizes">
             <Input placeholder="比如：36 37 41 42 仅支持逗号、顿号、空格进行分隔" />
           </Form.Item>
           <Form.Item label="标签" name="tags">
-            <Input placeholder="比如：shoes，hot，summer 只支持逗号、顿号进行分隔" />
+            <Input placeholder="比如：shoes，hot，summer 只支持逗号进行分隔" />
           </Form.Item>
         </div>
         <Form.Item>

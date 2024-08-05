@@ -9,7 +9,6 @@ import { getProducts } from "../../lib/actions";
 const Collections = () => {
   const [products, setProducts] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState(true);
-
   const fetchProducts = async () => {
     try {
       const res = await getProducts();

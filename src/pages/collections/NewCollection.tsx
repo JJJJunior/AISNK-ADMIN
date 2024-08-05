@@ -4,34 +4,32 @@ import { CloseSquareOutlined, LoadingOutlined } from "@ant-design/icons";
 import { CollectionStatusType, CollectionType } from "../../lib/types";
 import { useNavigate } from "react-router-dom";
 import UploadImages from "../../components/UploadImages";
-import { UploadFile } from "antd/lib";
-import { useCookies } from "react-cookie";
 import { addCollection, getCollectionStatus } from "../../lib/actions";
+import { FileListType } from "../../lib/types";
+import { UploadFile } from "antd/lib";
 import SortableList, { SortableItem } from "react-easy-sort";
 import arrayMoveImmutable from "array-move";
 
 const NewCollection: React.FC = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [fileList, setFileList] = useState<FileListType[]>([]);
   const navigate = useNavigate();
-  const [cookies] = useCookies<any>();
   const [status, setStatus] = useState<CollectionStatusType[] | null>(null);
-
-  const onSortEnd = (oldIndex: number, newIndex: number) => {
-    setFileList((array) => arrayMoveImmutable(array, oldIndex, newIndex));
-  };
 
   const onFinish = async (values: any) => {
     const newCollection: CollectionType = {
       ...values,
-      fileList,
+      fileList: fileList.map((file, index) => ({ ...file, order_index: index + 1 })),
     };
-
+    if (newCollection.fileList.length === 0) {
+      message.error("请上传至少一张图片");
+      return;
+    }
     // console.log("Received values of form: ", newCollection);
     try {
       setLoading(true);
-      const res = await addCollection(newCollection, cookies);
+      const res = await addCollection(newCollection);
       if (res.status === 200) {
         message.success("创建栏目成功");
         navigate("/collections");
@@ -66,32 +64,23 @@ const NewCollection: React.FC = () => {
     evt.preventDefault();
     setFileList((prevState) => prevState.filter((item) => item.response.url !== uploadedFile.response.url));
   };
+
+  const onSortEnd = (oldIndex: number, newIndex: number) => {
+    setFileList((array) => arrayMoveImmutable(array, oldIndex, newIndex));
+  };
   return (
     <div>
       <Form form={form} onFinish={onFinish} layout="vertical">
         <Form.Item label="栏目名称" name="title" rules={[{ required: true, message: "栏目名称不能为空" }]}>
           <Input />
         </Form.Item>
-        <Form.Item
-          label="栏目图片"
-          valuePropName="点击上传图片"
-          rules={[
-            {
-              validator: () => {
-                if (!fileList || fileList.length === 0) {
-                  return Promise.reject(new Error("请至少上传一张图片"));
-                }
-                return Promise.resolve();
-              },
-            },
-          ]}
-        >
+        <Form.Item label="栏目图片" valuePropName="点击上传图片">
           <UploadImages setFileList={setFileList} fileList={fileList} />
         </Form.Item>
         <SortableList onSortEnd={onSortEnd} className="flex flex-wrap gap-4" draggedItemClassName="dragged">
           {fileList.length > 0 &&
             fileList.map((item, index) => (
-              <SortableItem key={item}>
+              <SortableItem key={index}>
                 <div key={index} className="flex relative">
                   <div className="h-42 w-36">
                     <img

@@ -4,8 +4,9 @@ import { Button, Input, InputRef, message, Popconfirm, Space, Table, TableColumn
 import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import { CollectionType } from "../../lib/types";
-import { useCookies } from "react-cookie";
 import { deleteCollection } from "../../lib/actions";
+import { FileListType } from "../../lib/types";
+import { Image } from "antd";
 
 type DataIndex = keyof CollectionType;
 
@@ -18,7 +19,6 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef<InputRef>(null);
-  const [cookies] = useCookies();
 
   const handleSearch = (selectedKeys: string[], confirm: FilterDropdownProps["confirm"], dataIndex: DataIndex) => {
     confirm();
@@ -26,12 +26,12 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
     setSearchedColumn(dataIndex);
   };
 
-  console.log(dataSource);
+  // console.log(dataSource);
 
   const handleDelete = async (key: React.Key) => {
     // console.log(key);
     try {
-      const res = await deleteCollection(Number(key), cookies);
+      const res = await deleteCollection(Number(key));
       if (res.status === 200) {
         message.success("删除成功");
       }
@@ -125,6 +125,12 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
       render: (_, record) => <a href={`/collections/${record.id}`}>{record.title}</a>,
     },
     {
+      title: "栏目图片",
+      dataIndex: "fileList",
+      key: "fileList",
+      render: (fileList: FileListType[]) => <Image width={80} src={fileList[0]?.response?.url} />,
+    },
+    {
       title: "栏目描述",
       dataIndex: "description",
       key: "description",
@@ -171,7 +177,7 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
         ) : null,
     },
   ];
-  return <Table columns={columns} dataSource={dataSource} rowKey="title" />;
+  return <Table columns={columns} dataSource={dataSource} rowKey="id" />;
 };
 
 export default DataTable;

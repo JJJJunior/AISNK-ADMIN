@@ -1,16 +1,27 @@
 import React, { useRef, useState } from "react";
 import type { FilterDropdownProps } from "antd/es/table/interface";
-import { Button, Input, InputRef, message, Popconfirm, Space, Table, TableColumnsType, TableColumnType } from "antd";
+import {
+  Button,
+  Input,
+  InputRef,
+  message,
+  Popconfirm,
+  Space,
+  Table,
+  TableColumnsType,
+  TableColumnType,
+  Image,
+} from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
-import { ProductType } from "../../lib/types";
+import { FileListType, ProductType } from "../../lib/types";
 import { useCookies } from "react-cookie";
 import { deleteProduct } from "../../lib/actions";
 
 type DataIndex = keyof ProductType;
 
 interface DataTableProps {
-  dataSource: ProductType[];
+  dataSource: ProductType[] | [];
   fetchCollections: () => Promise<void>;
 }
 
@@ -19,6 +30,7 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef<InputRef>(null);
   const [cookies] = useCookies();
+  // console.log(dataSource);
 
   const handleSearch = (selectedKeys: string[], confirm: FilterDropdownProps["confirm"], dataIndex: DataIndex) => {
     confirm();
@@ -116,18 +128,27 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
   });
   const columns: TableColumnsType<ProductType> = [
     {
-      title: "栏目名称",
+      title: "产品名称",
       dataIndex: "title",
       key: "title",
       ...getColumnSearchProps("title"),
-      render: (_, record) => <a href={`/products/${record.id}`}>{record.title}</a>,
+      render: (_, record) => (
+        <a href={`/products/${record.id}`} className="text-green-500">
+          {record.title}
+        </a>
+      ),
     },
     {
-      title: "栏目描述",
-      dataIndex: "description",
-      key: "description",
-      ...getColumnSearchProps("description"),
-      render: (text) => <p className="ellipsis-1-lines max-w-[800px]">{text}</p>,
+      title: "产品编码",
+      dataIndex: "code",
+      key: "code",
+      ...getColumnSearchProps("code"),
+    },
+    {
+      title: "产品图片",
+      dataIndex: "fileList",
+      key: "fileList",
+      render: (fileList: FileListType[]) => <Image width={80} src={fileList[0]?.response?.url} />,
     },
     {
       title: "状态",
@@ -136,13 +157,49 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
       ...getColumnSearchProps("status"),
       render: (text) => (
         <p
-          className={`ellipsis-1-lines max-w-[800px] ${
+          className={`ellipsis-1-lines max-w-[500px] ${
             text === "上线" ? "text-green-500" : text === "归档" ? "text-yellow-500" : "text-red-500"
           }`}
         >
           {text}
         </p>
       ),
+    },
+    {
+      title: "价格",
+      dataIndex: "price",
+      key: "price",
+      render: (text) => <p className="text-lg font-semibold">$ {text}</p>,
+    },
+    {
+      title: "库存",
+      dataIndex: "stock",
+      key: "stock",
+    },
+    {
+      title: "分类名称",
+      dataIndex: "category",
+      key: "category",
+    },
+    {
+      title: "修改时间",
+      dataIndex: "updated_at",
+      key: "updated_at",
+      render: (updatedAt) => {
+        const date = new Date(updatedAt);
+        const formattedDate = date
+          .toLocaleString("sv-SE", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false,
+          })
+          .replace("T", " ");
+        return formattedDate;
+      },
     },
     {
       title: "操作",
@@ -161,7 +218,7 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
         ) : null,
     },
   ];
-  return <Table columns={columns} dataSource={dataSource} rowKey="title" />;
+  return <Table columns={columns} dataSource={dataSource} rowKey="id" />;
 };
 
 export default DataTable;

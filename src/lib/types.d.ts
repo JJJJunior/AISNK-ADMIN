@@ -1,10 +1,10 @@
-import { UploadFile } from "antd/lib";
-
 export interface UserType {
   id: string;
   username: string;
   password: string;
   role: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface CollectionStatusType {
@@ -18,7 +18,7 @@ export interface CollectionType {
   description: string;
   status: string;
   products: ProductType[];
-  fileList: UploadFile[];
+  fileList: FileListType[];
   createdAt: string; // ISO Date string
   updatedAt: string; // ISO Date string
 }
@@ -39,13 +39,38 @@ export interface ProductType {
   colors: string | null;
   price: number;
   expense: number;
-  createdAt: string; // ISO Date string
-  updatedAt: string; // ISO Date string
+  discount: number;
+  size_image: string;
+  createdAt: Date; // ISO Date string
+  updatedAt: Date; // ISO Date string
   stock: number;
+  fileList: FileListType[];
   productStatus: ProductStatusType;
   collections: CollectionType[];
 }
+export interface FileListType {
+  id: number;
+  created_at: Date;
+  updated_at: Date;
+  lastModified: string;
+  LastModified: number;
+  name: string;
+  response: FileListImageUrlType;
+  size: number;
+  status: string;
+  type: string;
+  collectionID: number;
+  productID: number;
+  order_index: number;
+}
 
+export interface FileListImageUrlType {
+  id: number;
+  created_at: Date;
+  updated_at: Date;
+  url: string;
+  fileListID: string;
+}
 export interface OrderStatusType {
   id: string; // UUID
   status: string | null;

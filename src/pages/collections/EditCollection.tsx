@@ -4,24 +4,19 @@ import UploadImages from "../../components/UploadImages";
 import { CloseSquareOutlined, LoadingOutlined } from "@ant-design/icons";
 import { CollectionType, CollectionStatusType } from "../../lib/types";
 import { useNavigate, useParams } from "react-router-dom";
-import { UploadFile } from "antd/lib";
-import { useCookies } from "react-cookie";
 import { getCollectionStatus, updateCollection, getCollectionDetails } from "../../lib/actions";
+import { FileListType } from "../../lib/types";
+import { UploadFile } from "antd/lib";
 import SortableList, { SortableItem } from "react-easy-sort";
 import arrayMoveImmutable from "array-move";
 
 const EditCollection = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [fileList, setFileList] = useState<FileListType[]>([]);
   const [status, setStatus] = useState<CollectionStatusType[]>([]);
   const { collectionId } = useParams();
   const navigate = useNavigate();
-  const [cookies] = useCookies();
-
-  const onSortEnd = (oldIndex: number, newIndex: number) => {
-    setFileList((array) => arrayMoveImmutable(array, oldIndex, newIndex));
-  };
 
   useEffect(() => {
     const fetchCollectionStatus = async () => {
@@ -57,12 +52,16 @@ const EditCollection = () => {
   const onFinish = async (values: any) => {
     const newCollection: CollectionType = {
       ...values,
-      fileList,
+      fileList: fileList.map((file, index) => ({ ...file, order_index: index + 1 })),
     };
+    if (newCollection.fileList.length === 0) {
+      message.error("请上传至少一张图片");
+      return;
+    }
     setLoading(true);
     // console.log(newCollection);
     try {
-      const res = await updateCollection(Number(collectionId), newCollection, cookies);
+      const res = await updateCollection(Number(collectionId), newCollection);
       if (res.status === 200) {
         message.success("修改栏目成功");
         navigate("/collections");
@@ -78,6 +77,10 @@ const EditCollection = () => {
   const handRemoveImageBtn = (evt: React.MouseEvent<HTMLButtonElement>, uploadedFile: UploadFile) => {
     evt.preventDefault();
     setFileList((prevState) => prevState.filter((item) => item.response.url !== uploadedFile.response.url));
+  };
+
+  const onSortEnd = (oldIndex: number, newIndex: number) => {
+    setFileList((array) => arrayMoveImmutable(array, oldIndex, newIndex));
   };
 
   return (
@@ -105,7 +108,7 @@ const EditCollection = () => {
         <SortableList onSortEnd={onSortEnd} className="flex flex-wrap gap-4" draggedItemClassName="dragged">
           {fileList.length > 0 &&
             fileList.map((item, index) => (
-              <SortableItem key={item}>
+              <SortableItem key={index}>
                 <div key={index} className="flex relative">
                   <div className="h-42 w-36">
                     <img

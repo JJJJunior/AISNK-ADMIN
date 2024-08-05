@@ -4,8 +4,6 @@ import { CollectionType, ProductType, UserType } from "./types";
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 axios.defaults.withCredentials = true;
 
-type CookiesType = any;
-
 export const login = async (values: UserType) => {
   try {
     return await axios.post("/login", values);
@@ -15,10 +13,7 @@ export const login = async (values: UserType) => {
   }
 };
 
-export const register = async (values: UserType, cookies: CookiesType) => {
-  axios.defaults.headers.common = {
-    Authorization: `${cookies.Authorization}`,
-  };
+export const register = async (values: UserType) => {
   try {
     return await axios.post("/signup", values);
   } catch (err) {
@@ -27,10 +22,7 @@ export const register = async (values: UserType, cookies: CookiesType) => {
   }
 };
 
-export const validate = async (cookies: CookiesType) => {
-  axios.defaults.headers.common = {
-    Authorization: `${cookies.Authorization}`,
-  };
+export const validate = async () => {
   try {
     return await axios.get("/validate");
   } catch (err) {
@@ -66,10 +58,7 @@ export const getCollections = async () => {
   }
 };
 
-export const addCollection = async (newCollection: CollectionType, cookies: CookiesType) => {
-  axios.defaults.headers.common = {
-    Authorization: `${cookies.Authorization}`,
-  };
+export const addCollection = async (newCollection: CollectionType) => {
   try {
     return await axios.post("/collections", newCollection);
   } catch (err) {
@@ -78,10 +67,7 @@ export const addCollection = async (newCollection: CollectionType, cookies: Cook
   }
 };
 
-export const updateCollection = async (collectionId: number, newCollection: CollectionType, cookies: CookiesType) => {
-  axios.defaults.headers.common = {
-    Authorization: `${cookies.Authorization}`,
-  };
+export const updateCollection = async (collectionId: number, newCollection: CollectionType) => {
   try {
     return await axios.put(`/collections/${collectionId}`, newCollection);
   } catch (err) {
@@ -90,11 +76,8 @@ export const updateCollection = async (collectionId: number, newCollection: Coll
   }
 };
 
-export const deleteCollection = async (collectionId: number, cookies: CookiesType) => {
+export const deleteCollection = async (collectionId: number) => {
   try {
-    axios.defaults.headers.common = {
-      Authorization: `${cookies.Authorization}`,
-    };
     return await axios.delete(`/collections/${collectionId}`);
   } catch (err) {
     console.log("[deleteCollection_DELETE]...", err);
@@ -120,10 +103,7 @@ export const getProductStatus = async () => {
   }
 };
 
-export const addProduct = async (product: ProductType, cookies: CookiesType) => {
-  axios.defaults.headers.common = {
-    Authorization: `${cookies.Authorization}`,
-  };
+export const addProduct = async (product: ProductType) => {
   try {
     return await axios.post("/products", product);
   } catch (err) {
@@ -141,10 +121,7 @@ export const getProductDetails = async (id: string) => {
   }
 };
 
-export const updateProduct = async (productId: number, product: ProductType, cookies: CookiesType) => {
-  axios.defaults.headers.common = {
-    Authorization: `${cookies.Authorization}`,
-  };
+export const updateProduct = async (productId: number, product: ProductType) => {
   try {
     return await axios.put(`/products/${productId}`, product);
   } catch (err) {
@@ -153,14 +130,20 @@ export const updateProduct = async (productId: number, product: ProductType, coo
   }
 };
 
-export const deleteProduct = async (productId: number, cookies: CookiesType) => {
+export const deleteProduct = async (productId: number) => {
   try {
-    axios.defaults.headers.common = {
-      Authorization: `${cookies.Authorization}`,
-    };
     return await axios.delete(`/products/${productId}`);
   } catch (err) {
     console.log("[deleteProduct_DELETE]...", err);
+    return Promise.reject(err);
+  }
+};
+
+export const getUsers = async () => {
+  try {
+    return await axios.get("/users");
+  } catch (err) {
+    console.log("[getUsers_GET]...", err);
     return Promise.reject(err);
   }
 };
