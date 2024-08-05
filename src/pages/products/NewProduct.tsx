@@ -124,7 +124,7 @@ const NewProduct: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="p-4">
       <Form form={form} onFinish={onFinish} layout="vertical">
         <div>
           <Form.Item label="产品名称" name="title" rules={[{ required: true, message: "产品名称不能为空" }]}>

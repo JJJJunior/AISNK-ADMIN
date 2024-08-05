@@ -128,7 +128,9 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
       title: "栏目图片",
       dataIndex: "fileList",
       key: "fileList",
-      render: (fileList: FileListType[]) => <Image width={80} src={fileList[0]?.response?.url} />,
+      render: (fileList: FileListType[]) => (
+        <Image className="rounded-lg shadow-lg" width={80} src={fileList[0]?.response?.url} />
+      ),
     },
     {
       title: "栏目描述",
@@ -166,18 +168,20 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
       key: "operation",
       render: (_, record) =>
         dataSource.length >= 1 ? (
-          <div className="flex items-center gap-2">
-            <Button>
+          <div className="flex flex-col items-center gap-2">
+            <Button type="primary">
               <a href={`/collections/${record.id}`}>编辑</a>
             </Button>
             <Popconfirm title="确定删除?" onConfirm={() => handleDelete(record.id)}>
-              <Button>删除</Button>
+              <Button type="primary" danger>
+                删除
+              </Button>
             </Popconfirm>
           </div>
         ) : null,
     },
   ];
-  return <Table columns={columns} dataSource={dataSource} rowKey="id" />;
+  return <Table sticky={true} columns={columns} dataSource={dataSource} rowKey="id" className="border shadow-lg" />;
 };
 
 export default DataTable;

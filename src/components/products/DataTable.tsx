@@ -6,6 +6,7 @@ import {
   InputRef,
   message,
   Popconfirm,
+  Tag,
   Space,
   Table,
   TableColumnsType,
@@ -148,7 +149,9 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
       title: "产品图片",
       dataIndex: "fileList",
       key: "fileList",
-      render: (fileList: FileListType[]) => <Image width={80} src={fileList[0]?.response?.url} />,
+      render: (fileList: FileListType[]) => (
+        <Image className="rounded-lg shadow-lg" width={80} src={fileList[0]?.response?.url} />
+      ),
     },
     {
       title: "状态",
@@ -156,20 +159,16 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
       key: "status",
       ...getColumnSearchProps("status"),
       render: (text) => (
-        <p
-          className={`ellipsis-1-lines max-w-[500px] ${
-            text === "上线" ? "text-green-500" : text === "归档" ? "text-yellow-500" : "text-red-500"
-          }`}
-        >
+        <Tag className={`${text === "上线" ? "text-green-500" : text === "归档" ? "text-yellow-500" : "text-red-500"}`}>
           {text}
-        </p>
+        </Tag>
       ),
     },
     {
       title: "价格",
       dataIndex: "price",
       key: "price",
-      render: (text) => <p className="text-lg font-semibold">$ {text}</p>,
+      render: (text) => <p className="text-sm font-semibold">{Number(text).toFixed(2)}</p>,
     },
     {
       title: "库存",
@@ -182,24 +181,10 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
       key: "category",
     },
     {
-      title: "修改时间",
-      dataIndex: "updated_at",
-      key: "updated_at",
-      render: (updatedAt) => {
-        const date = new Date(updatedAt);
-        const formattedDate = date
-          .toLocaleString("sv-SE", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-            hour12: false,
-          })
-          .replace("T", " ");
-        return formattedDate;
-      },
+      title: "尺码表",
+      dataIndex: "size_image",
+      key: "size_image",
+      render: (size_image) => <p className="w-8">{size_image === "" || size_image === undefined ? "无" : "有"}</p>,
     },
     {
       title: "操作",
@@ -207,18 +192,28 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
       key: "operation",
       render: (_, record) =>
         dataSource.length >= 1 ? (
-          <div className="flex items-center gap-2">
-            <Button>
+          <div className="flex flex-col items-center gap-2">
+            <Button type="primary">
               <a href={`/products/${record.id}`}>编辑</a>
             </Button>
             <Popconfirm title="确定删除?" onConfirm={() => handleDelete(record.id)}>
-              <Button>删除</Button>
+              <Button type="primary" danger>
+                删除
+              </Button>
             </Popconfirm>
           </div>
         ) : null,
     },
   ];
-  return <Table columns={columns} dataSource={dataSource} rowKey="id" />;
+  return (
+    <Table
+      sticky={true}
+      columns={columns}
+      dataSource={dataSource}
+      rowKey="id"
+      className="border overflow-hidden shadow-lg"
+    />
+  );
 };
 
 export default DataTable;

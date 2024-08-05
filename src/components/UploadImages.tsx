@@ -23,7 +23,12 @@ const UploadImages: React.FC<UploadImagesProps> = ({ setFileList, fileList }) =>
       multiple
       onChange={onChange}
     >
-      <Button onClick={(evt) => evt.preventDefault()} icon={<UploadOutlined />} disabled={fileList.length > 11}>
+      <Button
+        type="primary"
+        onClick={(evt) => evt.preventDefault()}
+        icon={<UploadOutlined />}
+        disabled={fileList.length > 11}
+      >
         点击上传最多12张
       </Button>
     </Upload>

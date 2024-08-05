@@ -41,7 +41,7 @@ const Collections = () => {
           </a>
         </Button>
       </div>
-      <div className="w-full">
+      <div className="w-full p-4">
         <DataTable dataSource={collections} fetchCollections={fetchCollections} />
       </div>
     </div>

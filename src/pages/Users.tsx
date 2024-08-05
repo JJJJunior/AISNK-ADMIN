@@ -55,7 +55,7 @@ const Users = () => {
   return (
     <div>
       <RegisterForm />
-      <Table dataSource={users} columns={columns} rowKey="ID" />;
+      <Table dataSource={users} columns={columns} rowKey="ID" className="border shadow-lg" />;
     </div>
   );
 };

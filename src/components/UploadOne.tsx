@@ -16,7 +16,7 @@ const UploadOne: React.FC<UploadImagesProps> = ({ setSizeImage }) => {
 
   return (
     <Upload action={`${import.meta.env.VITE_API_URL}/upload`} withCredentials onChange={onChange}>
-      <Button onClick={(evt) => evt.preventDefault()} icon={<UploadOutlined />}>
+      <Button type="primary" ghost onClick={(evt) => evt.preventDefault()} icon={<UploadOutlined />}>
         点击上传最多1张
       </Button>
     </Upload>

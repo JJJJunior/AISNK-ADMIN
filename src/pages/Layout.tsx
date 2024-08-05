@@ -67,28 +67,26 @@ const App: React.FC = () => {
         <div className="demo-logo-vertical" />
         <Menu
           defaultSelectedKeys={["1"]}
-          defaultOpenKeys={["sub1"]}
           mode="inline"
           onClick={onClick}
           theme="dark"
           selectedKeys={[current]}
           items={items}
+          style={{ flex: 1, minWidth: 0 }}
         />
       </Sider>
       <Layout style={{ marginInlineStart: 200 }}>
-        <Header style={{ padding: 0, background: colorBgContainer }}></Header>
-        <Content style={{ margin: "24px 16px 0", overflow: "initial" }}>
-          <div
-            style={{
-              padding: 24,
-              textAlign: "start",
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
-            }}
-          >
-            {/*children在这里*/}
-            <Outlet />
-          </div>
+        <Content
+          style={{
+            margin: "6px 0px",
+            padding: 16,
+            minHeight: 280,
+            background: colorBgContainer,
+            borderRadius: borderRadiusLG,
+          }}
+        >
+          {/*children在这里*/}
+          <Outlet />
         </Content>
         <Footer style={{ textAlign: "center" }}>
           Copyright ©{new Date().getFullYear()} AISNK All rights reserved.

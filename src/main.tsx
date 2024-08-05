@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { ConfigProvider } from "antd";
+import { ConfigProvider, ColorPicker, Divider } from "antd";
 import Layout from "./pages/Layout.tsx";
 import Home from "./pages/Home.tsx";
 import Login from "./pages/Login.tsx";
@@ -78,11 +78,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         theme={{
           token: {
             // Seed Token，影响范围大
-            colorPrimary: "#00b96b",
-            borderRadius: 2,
+            colorPrimary: "#7cb305",
+            borderRadius: 4,
 
             // 派生变量，影响范围小
-            colorBgContainer: "#f6ffed",
+            colorBgContainer: "#f5f5f5",
           },
         }}
       >
