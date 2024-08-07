@@ -1,36 +1,48 @@
 import React, { useRef, useState } from "react";
 import type { FilterDropdownProps } from "antd/es/table/interface";
-import {
-  Button,
-  Input,
-  InputRef,
-  message,
-  Popconfirm,
-  Tag,
-  Space,
-  Table,
-  TableColumnsType,
-  TableColumnType,
-  Image,
-} from "antd";
+import { Button, Input, InputRef, message, Popconfirm, Tag, Space, TableColumnType, Image, Table } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import { FileListType, ProductType } from "../../lib/types";
-import { useCookies } from "react-cookie";
 import { deleteProduct } from "../../lib/actions";
+import type { TableColumnsType } from "antd";
 
 type DataIndex = keyof ProductType;
 
 interface DataTableProps {
   dataSource: ProductType[] | [];
   fetchCollections: () => Promise<void>;
+  setShowAddColumns: React.Dispatch<React.SetStateAction<boolean>>;
+  receiveDataFromChild: (productIds: []) => void;
 }
 
-const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) => {
+const DataTable: React.FC<DataTableProps> = ({
+  dataSource,
+  fetchCollections,
+  setShowAddColumns,
+  receiveDataFromChild,
+}) => {
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef<InputRef>(null);
-  const [cookies] = useCookies();
+
+  // rowSelection object indicates the need for row selection
+  const rowSelection = {
+    onChange: (selectedRows: []) => {
+      if (selectedRows.length > 0) {
+        setShowAddColumns(true);
+      } else {
+        setShowAddColumns(false);
+      }
+      // console.log(`selectedRowKeys: ${selectedRowKeys}`, "selectedRows: ", selectedRows);
+      receiveDataFromChild(selectedRows);
+    },
+    getCheckboxProps: (record: ProductType) => ({
+      disabled: record.id === "Disabled User", // Column configuration not to be checked
+      name: record.id,
+    }),
+  };
+
   // console.log(dataSource);
 
   const handleSearch = (selectedKeys: string[], confirm: FilterDropdownProps["confirm"], dataIndex: DataIndex) => {
@@ -42,7 +54,7 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
   const handleDelete = async (key: React.Key) => {
     // console.log(key);
     try {
-      const res = await deleteProduct(Number(key), cookies);
+      const res = await deleteProduct(Number(key));
       if (res.status === 200) {
         message.success("删除成功");
       }
@@ -206,13 +218,19 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
     },
   ];
   return (
-    <Table
-      sticky={true}
-      columns={columns}
-      dataSource={dataSource}
-      rowKey="id"
-      className="border overflow-hidden shadow-lg"
-    />
+    <div>
+      <Table
+        rowSelection={{
+          type: "checkbox",
+          ...rowSelection,
+        }}
+        sticky={true}
+        columns={columns}
+        dataSource={dataSource}
+        rowKey="id"
+        className="border overflow-hidden shadow-lg"
+      />
+    </div>
   );
 };
 

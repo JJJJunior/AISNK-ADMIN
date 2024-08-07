@@ -36,14 +36,14 @@ const App: React.FC = () => {
 
   return (
     <div className="h-screen flex flex-col gap-4 justify-center items-center">
-      <h1 className="text-xl font-bold text-center">Aisnk产品管理系统</h1>
+      <h1 className="text-xl font-bold text-center">AISNK产品管理系统</h1>
       <Form
         form={form}
         name="basic"
         layout="vertical"
         onFinish={onFinish}
         autoComplete="off"
-        className="border border-green-500 h-1/3 w-1/3 p-8 rounded-lg"
+        className="border shadow-lg h-1/3 w-1/3 p-8 rounded-lg"
       >
         <Form.Item<FieldType> label="用户名" name="username" rules={[{ required: true, message: "请输入用户名！" }]}>
           <Input />

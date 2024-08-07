@@ -1,14 +1,36 @@
 import { useEffect, useState } from "react";
 import DataTable from "../../components/products/DataTable";
-import { Button } from "antd";
+import { Button, Select, message } from "antd";
 import { PlusCircleOutlined } from "@ant-design/icons";
-import { ProductType } from "../../lib/types";
+import { CollectionType, ProductType } from "../../lib/types";
 import Loader from "../../components/Loader";
-import { getProducts } from "../../lib/actions";
+import { getProducts, getCollections } from "../../lib/actions";
+import axios from "axios";
 
 const Collections = () => {
   const [products, setProducts] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showAddColumns, setShowAddColumns] = useState(false);
+  const [collections, setCollections] = useState<CollectionType[]>([]);
+  const [selectedProductIds, setSelectedCollectionsId] = useState([]);
+  const [selectedColl, setSelectedColl] = useState([]);
+
+  const receiveDataFromChild = (productIds: []) => {
+    setSelectedCollectionsId(productIds);
+  };
+
+  const fetchCollections = async () => {
+    try {
+      const res = await getCollections();
+      if (res.status === 200) {
+        // console.log(res.data.data);
+        setCollections(res.data.data);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const fetchProducts = async () => {
     try {
       const res = await getProducts();
@@ -24,15 +46,56 @@ const Collections = () => {
 
   useEffect(() => {
     fetchProducts();
+    fetchCollections();
   }, []);
 
   // console.log(products);
 
+  const handleProductConnectionToCollections = async () => {
+    // TODO: 实现产品和栏目关联的逻辑
+    const newData = {
+      product_ids: selectedProductIds,
+      collection_ids: selectedColl,
+    };
+    // 发送请求到后台，实现产品和栏目关联
+    console.log(newData, "fasongshujudaohoutai");
+    try {
+      const res = await axios.post("/products_on_collections", newData);
+      console.log(res.data.data);
+    } catch (err) {
+      console.error(err);
+      message.error("产品上架栏目失败");
+    }
+  };
+
+  const handleSelected = (values: []) => {
+    setSelectedColl(values);
+  };
   return loading ? (
     <Loader />
   ) : (
     <div className="w-full">
-      <div>
+      <div className="flex gap-4">
+        {showAddColumns && (
+          <>
+            <Select
+              showSearch
+              mode="multiple"
+              style={{ width: 300 }}
+              placeholder="选择栏目"
+              onChange={handleSelected}
+              filterOption={(input, option) => (option?.value ?? "").toLowerCase().includes(input.toLowerCase())}
+              options={(collections || []).map((collection) => ({
+                value: collection.id,
+                label: collection.title,
+              }))}
+            />
+            <Button onClick={handleProductConnectionToCollections} type="primary" ghost>
+              批量上栏目
+              <PlusCircleOutlined className="ml-2" />
+            </Button>
+          </>
+        )}
         <Button type="primary">
           <a href="/products/new">
             添加产品
@@ -41,7 +104,12 @@ const Collections = () => {
         </Button>
       </div>
       <div className="w-full">
-        <DataTable dataSource={products} fetchCollections={fetchProducts} />
+        <DataTable
+          dataSource={products}
+          fetchCollections={fetchProducts}
+          setShowAddColumns={setShowAddColumns}
+          receiveDataFromChild={receiveDataFromChild}
+        />
       </div>
     </div>
   );
