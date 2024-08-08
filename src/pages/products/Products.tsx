@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import DataTable from "../../components/products/DataTable";
 import { Button, Select, message } from "antd";
-import { PlusCircleOutlined } from "@ant-design/icons";
+import { PlusCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import { CollectionType, ProductType } from "../../lib/types";
 import Loader from "../../components/Loader";
 import { getProducts, getCollections } from "../../lib/actions";
@@ -13,11 +13,12 @@ const Collections = () => {
   const [loading, setLoading] = useState(true);
   const [showAddColumns, setShowAddColumns] = useState(false);
   const [collections, setCollections] = useState<CollectionType[]>([]);
-  const [selectedProductIds, setSelectedCollectionsId] = useState([]);
-  const [selectedColl, setSelectedColl] = useState([]);
+  const [selectedProductIds, setSelectedProductIds] = useState([]);
+  const [selectedColIds, setSelectedColIds] = useState([]);
+  const navigate = useNavigate();
 
   const receiveDataFromChild = (productIds: []) => {
-    setSelectedCollectionsId(productIds);
+    setSelectedProductIds(productIds);
   };
 
   const fetchCollections = async () => {
@@ -56,7 +57,7 @@ const Collections = () => {
     // TODO: 实现产品和栏目关联的逻辑
     const newData = {
       product_ids: selectedProductIds,
-      collection_ids: selectedColl,
+      collection_ids: selectedColIds,
     };
 
     if (newData.collection_ids.length === 0) {
@@ -84,7 +85,7 @@ const Collections = () => {
   };
 
   const handleSelected = (values: []) => {
-    setSelectedColl(values);
+    setSelectedColIds(values);
   };
   return loading ? (
     <Loader />
@@ -108,6 +109,17 @@ const Collections = () => {
             <Button onClick={handleProductConnectionToCollections} type="primary" ghost>
               批量上栏目
               <PlusCircleOutlined className="ml-2" />
+            </Button>
+            <Button
+              onClick={() => {
+                setShowAddColumns(false);
+                setSelectedColIds([]);
+                setSelectedProductIds([]);
+                navigate("/products");
+              }}
+            >
+              取消
+              <CloseCircleOutlined />
             </Button>
           </>
         )}

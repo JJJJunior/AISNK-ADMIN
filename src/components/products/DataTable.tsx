@@ -171,9 +171,9 @@ const DataTable: React.FC<DataTableProps> = ({
       dataIndex: "collections",
       key: "collections",
       render: (collections: CollectionType[]) => (
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-1">
           {collections.map((collection) => (
-            <p key={collection.id} className="text-sm">
+            <p key={collection.id} className="text-sm border bg-blue-500 rounded-md text-white">
               {collection.title}
             </p>
           ))}

@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { ContainerOutlined, DesktopOutlined, PieChartOutlined } from "@ant-design/icons";
+import {
+  SkinOutlined,
+  ProfileOutlined,
+  HomeOutlined,
+  TeamOutlined,
+  DollarOutlined,
+  UserOutlined,
+  LogoutOutlined,
+} from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { Layout, Menu, theme } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -21,13 +29,13 @@ const siderStyle: React.CSSProperties = {
 type MenuItem = Required<MenuProps>["items"][number];
 
 const items: MenuItem[] = [
-  { key: "/", icon: <PieChartOutlined />, label: "首页" },
-  { key: "/collections", icon: <DesktopOutlined />, label: "栏目管理" },
-  { key: "/products", icon: <ContainerOutlined />, label: "产品管理" },
-  { key: "/customers", icon: <ContainerOutlined />, label: "客户管理" },
-  { key: "/orders", icon: <ContainerOutlined />, label: "订单管理" },
-  { key: "/users", icon: <ContainerOutlined />, label: "用户管理" },
-  { key: "/logout", icon: <ContainerOutlined />, label: "退出登录" },
+  { key: "/", icon: <HomeOutlined />, label: "首页" },
+  { key: "/collections", icon: <ProfileOutlined />, label: "栏目管理" },
+  { key: "/products", icon: <SkinOutlined />, label: "产品管理" },
+  { key: "/customers", icon: <TeamOutlined />, label: "客户管理" },
+  { key: "/orders", icon: <DollarOutlined />, label: "订单管理" },
+  { key: "/users", icon: <UserOutlined />, label: "用户管理" },
+  { key: "/logout", icon: <LogoutOutlined />, label: "退出登录" },
 ];
 
 const App: React.FC = () => {
