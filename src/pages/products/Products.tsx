@@ -15,7 +15,6 @@ const Collections = () => {
   const [collections, setCollections] = useState<CollectionType[]>([]);
   const [selectedProductIds, setSelectedCollectionsId] = useState([]);
   const [selectedColl, setSelectedColl] = useState([]);
-  const navigate = useNavigate();
 
   const receiveDataFromChild = (productIds: []) => {
     setSelectedCollectionsId(productIds);
@@ -59,6 +58,12 @@ const Collections = () => {
       product_ids: selectedProductIds,
       collection_ids: selectedColl,
     };
+
+    if (newData.collection_ids.length === 0) {
+      message.warning("请先选择栏目");
+      return;
+    }
+
     // 发送请求到后台，实现产品和栏目关联
     // console.log(newData, "fasongshujudaohoutai");
     try {
@@ -66,7 +71,7 @@ const Collections = () => {
       const res = await axios.post("/products_on_collections", newData);
       if (res.status === 200) {
         message.success("产品上架栏目成功");
-        navigate("/products");
+        window.location.href = "/products";
       }
       // console.log(res.data.data);
     } catch (err) {

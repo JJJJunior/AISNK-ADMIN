@@ -1,9 +1,9 @@
 import React, { useRef, useState } from "react";
 import type { FilterDropdownProps } from "antd/es/table/interface";
-import { Button, Input, InputRef, message, Popconfirm, Tag, Space, TableColumnType, Image, Table } from "antd";
+import { Button, Input, InputRef, message, Popconfirm, Tag, Space, TableColumnType, Image, Table, Divider } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
-import { FileListType, ProductType } from "../../lib/types";
+import { CollectionType, FileListType, ProductType } from "../../lib/types";
 import { deleteProduct } from "../../lib/actions";
 import type { TableColumnsType } from "antd";
 import { Link } from "react-router-dom";
@@ -167,6 +167,26 @@ const DataTable: React.FC<DataTableProps> = ({
       ),
     },
     {
+      title: "已上架栏目",
+      dataIndex: "collections",
+      key: "collections",
+      render: (collections: CollectionType[]) => (
+        <div className="flex flex-col">
+          {collections.map((collection) => (
+            <p key={collection.id} className="text-sm">
+              {collection.title}
+            </p>
+          ))}
+        </div>
+      ),
+    },
+    {
+      title: "分类名称",
+      dataIndex: "category",
+      key: "category",
+      ...getColumnSearchProps("category"),
+    },
+    {
       title: "状态",
       dataIndex: "status",
       key: "status",
@@ -196,12 +216,7 @@ const DataTable: React.FC<DataTableProps> = ({
         }
       },
     },
-    {
-      title: "分类名称",
-      dataIndex: "category",
-      key: "category",
-      ...getColumnSearchProps("category"),
-    },
+
     {
       title: "尺码表",
       dataIndex: "size_image",
