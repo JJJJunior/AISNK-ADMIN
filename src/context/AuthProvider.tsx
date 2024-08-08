@@ -2,11 +2,13 @@ import React, { createContext, ReactNode, useEffect, useState } from "react";
 import { UserType } from "../lib/types";
 import { useCookies } from "react-cookie";
 import { validate } from "../lib/actions.ts";
+import { useNavigate } from "react-router-dom";
 
 // 定义 AuthContext 的类型
 interface AuthContextType {
   user: UserType | null;
-  validate: () => UserType;
+  loading: boolean;
+  logout: () => void;
 }
 
 // 创建 AuthContext
@@ -19,22 +21,25 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<UserType | null>(null);
-  const [cookies, setCookie, removeCookie] = useCookies(["Authorization"]);
+  const [cookies, removeCookie] = useCookies(["Authorization"]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
   const logout = () => {
     setUser(null);
-    removeCookie("Authorization");
+    removeCookie("Authorization", "");
   };
   const checkUserInfo = async () => {
+    setLoading(true);
     try {
-      const res = await validate(cookies);
+      const res = await validate();
       if (res.status === 200) {
         setUser(res.data.data);
+        setLoading(false);
       }
     } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
+      // console.log(err);
+      navigate("/login");
+      // window.location.href = "/login";
     }
   };
   useEffect(() => {

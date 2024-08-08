@@ -6,6 +6,7 @@ import Highlighter from "react-highlight-words";
 import { FileListType, ProductType } from "../../lib/types";
 import { deleteProduct } from "../../lib/actions";
 import type { TableColumnsType } from "antd";
+import { Link } from "react-router-dom";
 
 type DataIndex = keyof ProductType;
 
@@ -59,7 +60,7 @@ const DataTable: React.FC<DataTableProps> = ({
         message.success("删除成功");
       }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     } finally {
       fetchCollections();
     }
@@ -146,9 +147,9 @@ const DataTable: React.FC<DataTableProps> = ({
       key: "title",
       ...getColumnSearchProps("title"),
       render: (_, record) => (
-        <a href={`/products/${record.id}`} className="text-green-500">
+        <Link to={`/products/${record.id}`} className="text-green-500">
           {record.title}
-        </a>
+        </Link>
       ),
     },
     {
@@ -206,7 +207,7 @@ const DataTable: React.FC<DataTableProps> = ({
         dataSource.length >= 1 ? (
           <div className="flex flex-col items-center gap-2">
             <Button type="primary">
-              <a href={`/products/${record.id}`}>编辑</a>
+              <Link to={`/products/${record.id}`}>编辑</Link>
             </Button>
             <Popconfirm title="确定删除?" onConfirm={() => handleDelete(record.id)}>
               <Button type="primary" danger>

@@ -5,6 +5,7 @@ import { PlusCircleOutlined } from "@ant-design/icons";
 import { CollectionType } from "../../lib/types";
 import Loader from "../../components/Loader";
 import { getCollections } from "../../lib/actions";
+import { Link } from "react-router-dom";
 
 const Collections = () => {
   const [collections, setCollections] = useState<CollectionType[]>([]);
@@ -35,10 +36,10 @@ const Collections = () => {
     <div className="w-full">
       <div>
         <Button type="primary">
-          <a href="/collections/new">
+          <Link to="/collections/new">
             添加栏目
             <PlusCircleOutlined className="ml-2" />
-          </a>
+          </Link>
         </Button>
       </div>
       <div className="w-full p-4">

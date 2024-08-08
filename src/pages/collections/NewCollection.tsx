@@ -35,7 +35,7 @@ const NewCollection: React.FC = () => {
         navigate("/collections");
       }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       message.error("创建栏目失败");
     } finally {
       cleanAll();
@@ -49,7 +49,7 @@ const NewCollection: React.FC = () => {
         setStatus(res.data.data);
       }
     } catch (err) {
-      console.log("[getCollectionStatus_GET]...", err);
+      // console.log("[getCollectionStatus_GET]...", err);
     }
   };
 

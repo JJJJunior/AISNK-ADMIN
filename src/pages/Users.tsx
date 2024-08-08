@@ -14,7 +14,7 @@ const Users = () => {
       const res = await getUsers(cookies);
       res.status === 200 && setUsers(res.data.data);
     } catch (err) {
-      console.error(err);
+      // console.log(err);
     }
   };
   useEffect(() => {

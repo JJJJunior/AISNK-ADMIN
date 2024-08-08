@@ -3,7 +3,6 @@ import type { FormProps } from "antd";
 import { Button, Form, Input } from "antd";
 import { message } from "antd/lib";
 import { useNavigate } from "react-router-dom";
-import { useCookies } from "react-cookie";
 import { register } from "../lib/actions.ts";
 
 type FieldType = {
@@ -13,7 +12,6 @@ type FieldType = {
 };
 
 const App: React.FC = () => {
-  const [cookies] = useCookies();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
@@ -25,7 +23,7 @@ const App: React.FC = () => {
     }
     try {
       setLoading(true);
-      const res = await register(values, cookies);
+      const res = await register(values);
       if (res.status === 200) {
         message.success("注册成功");
         navigate("/users");
@@ -41,10 +39,6 @@ const App: React.FC = () => {
     }
   };
 
-  const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
-
   return (
     <Form
       form={form}
@@ -52,7 +46,6 @@ const App: React.FC = () => {
       layout="inline"
       initialValues={{ remember: true }}
       onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
       autoComplete="off"
     >
       <Form.Item<FieldType>

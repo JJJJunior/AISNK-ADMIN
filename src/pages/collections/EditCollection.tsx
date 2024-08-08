@@ -26,7 +26,7 @@ const EditCollection = () => {
           setStatus(res.data.data);
         }
       } catch (err) {
-        console.log("[getCollectionStatus_GET]...", err);
+        // console.log("[getCollectionStatus_GET]...", err);
       }
     };
 
@@ -39,7 +39,7 @@ const EditCollection = () => {
           setFileList(res.data.data.fileList || []);
         }
       } catch (err) {
-        console.log("[collectionId_GET]", err);
+        // console.log("[collectionId_GET]", err);
       } finally {
         setLoading(false);
       }
@@ -67,7 +67,7 @@ const EditCollection = () => {
         navigate("/collections");
       }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       message.error("修改栏目失败");
     } finally {
       setLoading(false);

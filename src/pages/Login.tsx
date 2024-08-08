@@ -3,6 +3,7 @@ import type { FormProps } from "antd";
 import { Button, Form, Input } from "antd";
 import { message } from "antd/lib";
 import { login } from "../lib/actions.ts";
+import { useNavigate } from "react-router-dom";
 
 type FieldType = {
   username?: string;
@@ -11,6 +12,7 @@ type FieldType = {
 };
 
 const App: React.FC = () => {
+  const navigrate = useNavigate();
   // const [cookies, setCookies] = useCookies(["token"]);
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     // console.log('Success:', values);
@@ -20,10 +22,11 @@ const App: React.FC = () => {
       if (res.status === 200) {
         message.success("登录成功");
         // 用navigate有时候无法跳转
-        window.location.href = "/";
+        navigrate("/");
+        //打包后会出现404，因为会以为有另外一个入口文件
       }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       message.error("登录失败");
     } finally {
       form.resetFields();

@@ -5,7 +5,7 @@ import { Layout, Menu, theme } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/auth.ts";
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Content, Footer, Sider } = Layout;
 
 const siderStyle: React.CSSProperties = {
   overflow: "auto",
@@ -45,7 +45,7 @@ const App: React.FC = () => {
     navigate(e.key);
   };
   const { user, loading, logout } = useAuth();
-  // console.log(user)
+
   const navigate = useNavigate();
   const pathname = window.location.pathname;
 
@@ -55,11 +55,17 @@ const App: React.FC = () => {
     }
   }, [pathname]);
 
+  // console.log(user);
+
   useEffect(() => {
     if (!loading && !user) {
-      navigate("/login");
+      window.location.href = "/login";
     }
-  }, [user, navigate, loading]);
+  }, [user, loading]);
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <Layout hasSider>

@@ -2,26 +2,30 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { ConfigProvider, ColorPicker, Divider } from "antd";
+import { ConfigProvider } from "antd";
 import Layout from "./pages/Layout.tsx";
 import Home from "./pages/Home.tsx";
 import Login from "./pages/Login.tsx";
 import Collections from "./pages/collections/Collections.tsx";
 import Products from "./pages/products/Products.tsx";
 import Orders from "./pages/Orders.tsx";
-import Customers from "./pages/Customers.tsx";
+import Customers from "./components/Customers.tsx";
 import Users from "./pages/Users.tsx";
 import { CookiesProvider } from "react-cookie";
-import { AuthProvider } from "./context/AuthProvider.tsx";
 import NewProduct from "./pages/products/NewProduct.tsx";
 import EditProduct from "./pages/products/EditProduct.tsx";
 import NewCollection from "./pages/collections/NewCollection.tsx";
 import EditCollection from "./pages/collections/EditCollection.tsx";
+import { AuthProvider } from "./context/AuthProvider.tsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: (
+      <AuthProvider>
+        <Layout />
+      </AuthProvider>
+    ),
     children: [
       {
         path: "/",
@@ -73,23 +77,21 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <AuthProvider>
-      <ConfigProvider
-        theme={{
-          token: {
-            // Seed Token，影响范围大
-            colorPrimary: "#1677ff",
-            borderRadius: 4,
+    <ConfigProvider
+      theme={{
+        token: {
+          // Seed Token，影响范围大
+          colorPrimary: "#1677ff",
+          borderRadius: 4,
 
-            // 派生变量，影响范围小
-            colorBgContainer: "#f5f5f5",
-          },
-        }}
-      >
-        <CookiesProvider defaultSetOptions={{ path: "/" }}>
-          <RouterProvider router={router} />
-        </CookiesProvider>
-      </ConfigProvider>
-    </AuthProvider>
+          // 派生变量，影响范围小
+          colorBgContainer: "#f5f5f5",
+        },
+      }}
+    >
+      <CookiesProvider defaultSetOptions={{ path: "/" }}>
+        <RouterProvider router={router}></RouterProvider>
+      </CookiesProvider>
+    </ConfigProvider>
   </React.StrictMode>
 );

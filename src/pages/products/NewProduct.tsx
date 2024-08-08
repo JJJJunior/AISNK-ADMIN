@@ -30,7 +30,7 @@ const NewProduct: React.FC = () => {
       const res = await getCollections();
       res.status === 200 && setCollections(res.data.data);
     } catch (err) {
-      console.error(err);
+      // console.error(err);
     }
   };
   const fetchProductStatus = async () => {
@@ -41,7 +41,7 @@ const NewProduct: React.FC = () => {
         setSizeImage(res.data.data.size_image);
       }
     } catch (err) {
-      console.log("[fetchProductStatus_GET]...", err);
+      // console.log("[fetchProductStatus_GET]...", err);
     }
   };
 
@@ -76,7 +76,7 @@ const NewProduct: React.FC = () => {
         navigate("/products");
       }
     } catch (err) {
-      console.error(err);
+      // console.log(err);
       message.error("创建产品失败");
     } finally {
       cleanAll();

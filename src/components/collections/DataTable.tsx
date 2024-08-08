@@ -7,6 +7,7 @@ import { CollectionType } from "../../lib/types";
 import { deleteCollection } from "../../lib/actions";
 import { FileListType } from "../../lib/types";
 import { Image } from "antd";
+import { Link } from "react-router-dom";
 
 type DataIndex = keyof CollectionType;
 
@@ -36,7 +37,7 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
         message.success("删除成功");
       }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     } finally {
       fetchCollections();
     }
@@ -122,7 +123,7 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
       dataIndex: "title",
       key: "title",
       ...getColumnSearchProps("title"),
-      render: (_, record) => <a href={`/collections/${record.id}`}>{record.title}</a>,
+      render: (_, record) => <Link to={`/collections/${record.id}`}>{record.title}</Link>,
     },
     {
       title: "栏目图片",
@@ -170,7 +171,7 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
         dataSource.length >= 1 ? (
           <div className="flex flex-col items-center gap-2">
             <Button type="primary">
-              <a href={`/collections/${record.id}`}>编辑</a>
+              <Link to={`/collections/${record.id}`}>编辑</Link>
             </Button>
             <Popconfirm title="确定删除?" onConfirm={() => handleDelete(record.id)}>
               <Button type="primary" danger>

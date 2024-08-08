@@ -34,7 +34,7 @@ const EditProduct: React.FC = () => {
       const res = await getCollections();
       res.status === 200 && setCollections(res.data.data);
     } catch (err) {
-      console.error(err);
+      // console.error(err);
     }
   };
   const fetchProductStatus = async () => {
@@ -44,7 +44,7 @@ const EditProduct: React.FC = () => {
         setStatus(res.data.data);
       }
     } catch (err) {
-      console.log("[fetchProductStatus_GET]...", err);
+      // console.log("[fetchProductStatus_GET]...", err);
     }
   };
 
@@ -62,7 +62,7 @@ const EditProduct: React.FC = () => {
         setSizeImage(res.data.data.size_image);
       }
     } catch (err) {
-      console.log("[collectionId_GET]", err);
+      // console.log("[collectionId_GET]", err);
     } finally {
       setLoading(false);
     }
@@ -100,7 +100,7 @@ const EditProduct: React.FC = () => {
         navigate("/products");
       }
     } catch (err) {
-      console.error(err);
+      // console.log(err);
       message.error("更新产品失败");
     } finally {
       cleanAll();

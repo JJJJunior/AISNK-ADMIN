@@ -6,6 +6,7 @@ import { CollectionType, ProductType } from "../../lib/types";
 import Loader from "../../components/Loader";
 import { getProducts, getCollections } from "../../lib/actions";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Collections = () => {
   const [products, setProducts] = useState<ProductType[]>([]);
@@ -27,7 +28,7 @@ const Collections = () => {
         setCollections(res.data.data);
       }
     } catch (err) {
-      console.error(err);
+      // console.log(err);
     }
   };
 
@@ -40,7 +41,7 @@ const Collections = () => {
         setLoading(false);
       }
     } catch (err) {
-      console.error(err);
+      // console.log(err);
     }
   };
 
@@ -58,12 +59,12 @@ const Collections = () => {
       collection_ids: selectedColl,
     };
     // 发送请求到后台，实现产品和栏目关联
-    console.log(newData, "fasongshujudaohoutai");
+    // console.log(newData, "fasongshujudaohoutai");
     try {
       const res = await axios.post("/products_on_collections", newData);
-      console.log(res.data.data);
+      // console.log(res.data.data);
     } catch (err) {
-      console.error(err);
+      // console.log(err);
       message.error("产品上架栏目失败");
     }
   };
@@ -97,10 +98,10 @@ const Collections = () => {
           </>
         )}
         <Button type="primary">
-          <a href="/products/new">
+          <Link to="/products/new">
             添加产品
             <PlusCircleOutlined className="ml-2" />
-          </a>
+          </Link>
         </Button>
       </div>
       <div className="w-full">
