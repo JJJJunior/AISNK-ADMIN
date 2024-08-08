@@ -181,17 +181,26 @@ const DataTable: React.FC<DataTableProps> = ({
       title: "价格",
       dataIndex: "price",
       key: "price",
-      render: (text) => <p className="text-sm font-semibold">{Number(text).toFixed(2)}</p>,
-    },
-    {
-      title: "库存",
-      dataIndex: "stock",
-      key: "stock",
+      render: (_, record) => {
+        if (record.discount !== 1) {
+          return (
+            <div>
+              <p className="text-sm font-semibold">原价：{Number(record.price).toFixed(2)}</p>
+              <p className="text-sm font-semibold text-red-400">
+                折后价：{(Number(record.price) * Number(record.discount)).toFixed(2)}
+              </p>
+            </div>
+          );
+        } else {
+          return <p className="text-sm font-semibold">{Number(record.price).toFixed(2)}</p>;
+        }
+      },
     },
     {
       title: "分类名称",
       dataIndex: "category",
       key: "category",
+      ...getColumnSearchProps("category"),
     },
     {
       title: "尺码表",

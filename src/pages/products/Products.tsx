@@ -6,7 +6,7 @@ import { CollectionType, ProductType } from "../../lib/types";
 import Loader from "../../components/Loader";
 import { getProducts, getCollections } from "../../lib/actions";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Collections = () => {
   const [products, setProducts] = useState<ProductType[]>([]);
@@ -15,6 +15,7 @@ const Collections = () => {
   const [collections, setCollections] = useState<CollectionType[]>([]);
   const [selectedProductIds, setSelectedCollectionsId] = useState([]);
   const [selectedColl, setSelectedColl] = useState([]);
+  const navigate = useNavigate();
 
   const receiveDataFromChild = (productIds: []) => {
     setSelectedCollectionsId(productIds);
@@ -61,11 +62,19 @@ const Collections = () => {
     // 发送请求到后台，实现产品和栏目关联
     // console.log(newData, "fasongshujudaohoutai");
     try {
+      setLoading(true);
       const res = await axios.post("/products_on_collections", newData);
+      if (res.status === 200) {
+        message.success("产品上架栏目成功");
+        navigate("/products");
+      }
       // console.log(res.data.data);
     } catch (err) {
       // console.log(err);
       message.error("产品上架栏目失败");
+    } finally {
+      setShowAddColumns(false);
+      setLoading(false);
     }
   };
 
