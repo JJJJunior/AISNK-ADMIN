@@ -46,10 +46,10 @@ const SystemLogs = () => {
     },
     {
       title: "操作时间",
-      dataIndex: "CreatedAt",
-      key: "CreatedAt",
-      render: (CreatedAt: Date) => {
-        const date = new Date(CreatedAt);
+      dataIndex: "created_at",
+      key: "created_at",
+      render: (created_at: Date) => {
+        const date = new Date(created_at);
         const formattedDate = date
           .toLocaleString("sv-SE", {
             year: "numeric",

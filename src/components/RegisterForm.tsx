@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import type { FormProps } from "antd";
 import { Button, Form, Input } from "antd";
 import { message } from "antd/lib";
-import { useNavigate } from "react-router-dom";
 import { register } from "../lib/actions.ts";
 import { LogType } from "../lib/types";
 import { getUserIpInDB } from "../lib/actions.ts";
@@ -15,8 +14,11 @@ type FieldType = {
   remember?: string;
 };
 
-const App: React.FC = () => {
-  const navigate = useNavigate();
+interface AppProps {
+  fetchUsers: () => Promise<void>;
+}
+
+const App: React.FC<AppProps> = ({ fetchUsers }) => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const { user } = useAuth();
@@ -38,7 +40,7 @@ const App: React.FC = () => {
         };
         await logAction(logobj);
         message.success("注册成功");
-        navigate("/users");
+        fetchUsers();
       }
     } catch (err) {
       // console.log(err)
