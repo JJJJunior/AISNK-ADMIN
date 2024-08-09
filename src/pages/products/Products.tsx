@@ -131,8 +131,8 @@ const Collections = () => {
             <Button
               onClick={() => {
                 setShowAddColumns(false);
-                setSelectedColIds([]);
-                setSelectedProductIds([]);
+                setSelectedCols([]);
+                setSelectedPds([]);
                 navigate("/products");
               }}
             >

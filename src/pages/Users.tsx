@@ -1,11 +1,17 @@
 import { useState, useEffect } from "react";
 import RegisterForm from "../components/RegisterForm.tsx";
 import { UserType } from "../lib/types";
-import { getUsers } from "../lib/actions.ts";
-import { Table } from "antd";
+import { getUsers, resetPassword } from "../lib/actions.ts";
+import { Table, Popconfirm, Button, message } from "antd";
+import { useAuth } from "../context/auth.ts";
+import { deleteUser } from "../lib/actions.ts";
+import { LogType } from "../lib/types";
+import { getUserIpInDB } from "../lib/actions.ts";
+import { logAction } from "../lib/actions.ts";
 
 const Users = () => {
   const [users, setUsers] = useState<UserType[]>([]);
+  const { user } = useAuth();
   const fetchUsers = async () => {
     // 获取用户数据
     try {
@@ -18,6 +24,51 @@ const Users = () => {
   useEffect(() => {
     fetchUsers();
   }, []);
+
+  const handleDelete = async (record: UserType) => {
+    if (record.username === user?.username) {
+      message.error("无法删除当前登录用户");
+      return;
+    }
+    try {
+      const res = await deleteUser(Number(record.id));
+      if (res.status === 200) {
+        const logobj: LogType = {
+          user: user?.username || "",
+          type: "用户管理",
+          info: user?.username + `删除了用户：${record.username}`,
+          ip: await getUserIpInDB(user?.username || ""),
+        };
+        await logAction(logobj);
+        message.success("用户删除成功");
+        fetchUsers();
+      }
+    } catch (err) {
+      message.error("用户删除失败");
+      // console.log(err);
+    }
+  };
+
+  const handleRest = async (record: UserType) => {
+    try {
+      const res = await resetPassword(Number(record.id));
+      if (res.status === 200) {
+        const logobj: LogType = {
+          user: user?.username || "",
+          type: "用户管理",
+          info: user?.username + `重置了:${record.username}的密码`,
+          ip: await getUserIpInDB(user?.username || ""),
+        };
+        await logAction(logobj);
+        message.success("密码重置成功");
+        fetchUsers();
+      }
+    } catch (err) {
+      message.error("密码重置失败");
+      // console.log(err);
+    }
+  };
+
   const columns = [
     {
       title: "用户名",
@@ -48,6 +99,34 @@ const Users = () => {
           .replace("T", " ");
         return formattedDate;
       },
+    },
+    {
+      title: "密码重置",
+      dataIndex: "operation",
+      key: "operation",
+      render: (_: any, record: UserType) =>
+        users.length >= 1 ? (
+          <div>
+            <Popconfirm title="确认重置?" onConfirm={() => handleRest(record)}>
+              <Button type="primary">密码重置</Button>
+            </Popconfirm>
+          </div>
+        ) : null,
+    },
+    {
+      title: "操作",
+      dataIndex: "operation",
+      key: "operation",
+      render: (_: any, record: UserType) =>
+        users.length >= 1 ? (
+          <div>
+            <Popconfirm title="确定删除?" onConfirm={() => handleDelete(record)}>
+              <Button type="primary" danger>
+                删除
+              </Button>
+            </Popconfirm>
+          </div>
+        ) : null,
     },
   ];
   return (

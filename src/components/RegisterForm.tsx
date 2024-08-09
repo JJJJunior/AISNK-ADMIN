@@ -4,6 +4,10 @@ import { Button, Form, Input } from "antd";
 import { message } from "antd/lib";
 import { useNavigate } from "react-router-dom";
 import { register } from "../lib/actions.ts";
+import { LogType } from "../lib/types";
+import { getUserIpInDB } from "../lib/actions.ts";
+import { logAction } from "../lib/actions.ts";
+import { useAuth } from "../context/auth.ts";
 
 type FieldType = {
   username?: string;
@@ -15,6 +19,7 @@ const App: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
+  const { user } = useAuth();
 
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     // console.log('Success:', values);
@@ -25,6 +30,13 @@ const App: React.FC = () => {
       setLoading(true);
       const res = await register(values);
       if (res.status === 200) {
+        const logobj: LogType = {
+          user: user?.username || "",
+          type: "用户管理",
+          info: user?.username + `创建了用户:${values.username}`,
+          ip: await getUserIpInDB(user?.username || ""),
+        };
+        await logAction(logobj);
         message.success("注册成功");
         navigate("/users");
       }

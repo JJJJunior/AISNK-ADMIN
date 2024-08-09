@@ -208,6 +208,14 @@ export const getUsers = async () => {
   }
 };
 
+export const deleteUser = async (userId: number) => {
+  try {
+    return await axios.delete(`/users/${userId}`);
+  } catch (err) {
+    return Promise.reject(err);
+  }
+};
+
 export const getSystemLogs = async () => {
   try {
     return await axios.get("/logs");
@@ -221,6 +229,14 @@ export const checkIpInfo = async (ip: string) => {
   try {
     const res = await axios.get(`/logs/${ip}`);
     return res.data.ip_detail;
+  } catch (err) {
+    return Promise.reject(err);
+  }
+};
+
+export const resetPassword = async (userId: number) => {
+  try {
+    return await axios.put(`/users/${userId}/reset`);
   } catch (err) {
     return Promise.reject(err);
   }

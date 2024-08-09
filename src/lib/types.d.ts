@@ -15,8 +15,8 @@ export interface UserType {
   username: string;
   password: string;
   role: string;
-  createdAt: Date;
-  updatedAt: Date;
+  created_at: Date;
+  updated_at: Date;
 }
 
 export interface CollectionStatusType {
@@ -31,8 +31,8 @@ export interface CollectionType {
   status: string;
   products: ProductType[];
   fileList: FileListType[];
-  createdAt: string; // ISO Date string
-  updatedAt: string; // ISO Date string
+  created_at: string; // ISO Date string
+  updated_at: string; // ISO Date string
 }
 
 export interface ProductStatusType {
@@ -53,8 +53,8 @@ export interface ProductType {
   expense: number;
   discount: number;
   size_image: string;
-  createdAt: Date; // ISO Date string
-  updatedAt: Date; // ISO Date string
+  created_at: Date; // ISO Date string
+  updated_at: Date; // ISO Date string
   stock: number;
   fileList: FileListType[];
   productStatus: ProductStatusType;
@@ -93,8 +93,8 @@ export interface OrderType {
   customerClerkId: string | null;
   shippingRate: string | null;
   totalAmount: number | null;
-  createdAt: string; // ISO Date string
-  updatedAt: string; // ISO Date string
+  created_at: string; // ISO Date string
+  updated_at: string; // ISO Date string
   customer: CustomerType;
   products: ProductType[];
   orderStatus: OrderStatusType;
@@ -105,15 +105,15 @@ export interface CustomerType {
   clerkId: string;
   name: string | null;
   email: string | null;
-  createdAt: string; // ISO Date string
-  updatedAt: string; // ISO Date string
+  created_at: string; // ISO Date string
+  updated_at: string; // ISO Date string
 }
 
 export interface WishlistType {
   id: string; // UUID
   customer: CustomerType;
   product: ProductType;
-  createdAt: string; // ISO Date string
+  created_at: string; // ISO Date string
 }
 
 export interface ProductImageType {
