@@ -24,7 +24,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [cookies, removeCookie] = useCookies(["Authorization"]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const logout = () => {
+  const logout = async () => {
     setUser(null);
     removeCookie("Authorization", "");
   };

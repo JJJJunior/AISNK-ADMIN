@@ -1,3 +1,15 @@
+export interface LogType {
+  user: string;
+  type: string;
+  info: string;
+  ip: string;
+  continent_code?: string;
+  continent_name?: string;
+  country_code?: string;
+  country_name?: string;
+  city?: string;
+}
+
 export interface UserType {
   id: string;
   username: string;

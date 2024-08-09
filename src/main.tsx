@@ -17,6 +17,7 @@ import EditProduct from "./pages/products/EditProduct.tsx";
 import NewCollection from "./pages/collections/NewCollection.tsx";
 import EditCollection from "./pages/collections/EditCollection.tsx";
 import { AuthProvider } from "./context/AuthProvider.tsx";
+import SystemLogs from "./pages/SystemLogs.tsx";
 
 const router = createBrowserRouter([
   {
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
       {
         path: "/users",
         element: <Users />,
+      },
+      {
+        path: "/logs",
+        element: <SystemLogs />,
       },
       {
         path: "/collections/new",

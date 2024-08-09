@@ -7,6 +7,7 @@ import {
   DollarOutlined,
   UserOutlined,
   LogoutOutlined,
+  SecurityScanOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { Layout, Menu, theme } from "antd";
@@ -35,6 +36,7 @@ const items: MenuItem[] = [
   { key: "/customers", icon: <TeamOutlined />, label: "客户管理" },
   { key: "/orders", icon: <DollarOutlined />, label: "订单管理" },
   { key: "/users", icon: <UserOutlined />, label: "用户管理" },
+  { key: "/logs", icon: <SecurityScanOutlined />, label: "日志管理" },
   { key: "/logout", icon: <LogoutOutlined />, label: "退出登录" },
 ];
 

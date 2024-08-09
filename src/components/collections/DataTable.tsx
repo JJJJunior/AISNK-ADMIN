@@ -8,6 +8,9 @@ import { deleteCollection } from "../../lib/actions";
 import { FileListType } from "../../lib/types";
 import { Image } from "antd";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../context/auth";
+import { LogType } from "../../lib/types";
+import { logAction, getUserIpInDB } from "../../lib/actions";
 
 type DataIndex = keyof CollectionType;
 
@@ -20,6 +23,7 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef<InputRef>(null);
+  const { user } = useAuth();
 
   const handleSearch = (selectedKeys: string[], confirm: FilterDropdownProps["confirm"], dataIndex: DataIndex) => {
     confirm();
@@ -29,12 +33,19 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
 
   // console.log(dataSource);
 
-  const handleDelete = async (key: React.Key) => {
+  const handleDelete = async (record: CollectionType) => {
     // console.log(key);
     try {
-      const res = await deleteCollection(Number(key));
+      const res = await deleteCollection(Number(record.id));
       if (res.status === 200) {
         message.success("删除成功");
+        const logobj: LogType = {
+          user: user?.username || "",
+          type: "栏目管理",
+          info: user?.username + "删除了栏目:" + record.title,
+          ip: await getUserIpInDB(user?.username || ""),
+        };
+        await logAction(logobj);
       }
     } catch (err) {
       // console.log(err);
@@ -138,7 +149,7 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
       dataIndex: "description",
       key: "description",
       ...getColumnSearchProps("description"),
-      render: (text) => <p className="ellipsis-1-lines max-w-[800px]">{text}</p>,
+      render: (text) => <p className="truncate">{text}</p>,
     },
     {
       title: "状态",
@@ -173,7 +184,7 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
             <Button type="primary">
               <Link to={`/collections/${record.id}`}>编辑</Link>
             </Button>
-            <Popconfirm title="确定删除?" onConfirm={() => handleDelete(record.id)}>
+            <Popconfirm title="确定删除?" onConfirm={() => handleDelete(record)}>
               <Button type="primary" danger>
                 删除
               </Button>

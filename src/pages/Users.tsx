@@ -2,16 +2,14 @@ import { useState, useEffect } from "react";
 import RegisterForm from "../components/RegisterForm.tsx";
 import { UserType } from "../lib/types";
 import { getUsers } from "../lib/actions.ts";
-import { useCookies } from "react-cookie";
 import { Table } from "antd";
 
 const Users = () => {
   const [users, setUsers] = useState<UserType[]>([]);
-  const [cookies] = useCookies();
   const fetchUsers = async () => {
     // 获取用户数据
     try {
-      const res = await getUsers(cookies);
+      const res = await getUsers();
       res.status === 200 && setUsers(res.data.data);
     } catch (err) {
       // console.log(err);

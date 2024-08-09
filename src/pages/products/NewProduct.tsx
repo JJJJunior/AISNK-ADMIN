@@ -11,6 +11,9 @@ import { UploadFile } from "antd/lib";
 import SortableList, { SortableItem } from "react-easy-sort";
 import arrayMoveImmutable from "array-move";
 import UploadOne from "../../components/UploadOne";
+import { useAuth } from "../../context/auth";
+import { LogType } from "../../lib/types";
+import { logAction, getUserIpInDB } from "../../lib/actions";
 
 const NewProduct: React.FC = () => {
   const [form] = Form.useForm();
@@ -20,6 +23,7 @@ const NewProduct: React.FC = () => {
   const navigate = useNavigate();
   const [status, setStatus] = useState<ProductStatusType[] | null>(null);
   const [sizeImage, setSizeImage] = useState("");
+  const { user } = useAuth();
 
   const onSortEnd = (oldIndex: number, newIndex: number) => {
     setFileList((array) => arrayMoveImmutable(array, oldIndex, newIndex));
@@ -73,6 +77,13 @@ const NewProduct: React.FC = () => {
       const res = await addProduct(newProduct);
       if (res.status === 200) {
         message.success("创建产品成功");
+        const logobj: LogType = {
+          user: user?.username || "",
+          type: "产品管理",
+          info: user?.username + "创建了产品:" + newProduct.title,
+          ip: await getUserIpInDB(user?.username || ""),
+        };
+        await logAction(logobj);
         navigate("/products");
       }
     } catch (err) {

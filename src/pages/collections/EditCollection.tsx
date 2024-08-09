@@ -9,6 +9,9 @@ import { FileListType } from "../../lib/types";
 import { UploadFile } from "antd/lib";
 import SortableList, { SortableItem } from "react-easy-sort";
 import arrayMoveImmutable from "array-move";
+import { useAuth } from "../../context/auth";
+import { LogType } from "../../lib/types";
+import { getUserIpInDB, logAction } from "../../lib/actions";
 
 const EditCollection = () => {
   const [form] = Form.useForm();
@@ -17,6 +20,7 @@ const EditCollection = () => {
   const [status, setStatus] = useState<CollectionStatusType[]>([]);
   const { collectionId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchCollectionStatus = async () => {
@@ -64,6 +68,13 @@ const EditCollection = () => {
       const res = await updateCollection(Number(collectionId), newCollection);
       if (res.status === 200) {
         message.success("修改栏目成功");
+        const logobj: LogType = {
+          user: user?.username || "",
+          type: "栏目管理",
+          info: user?.username + "修改了栏目:" + newCollection.title,
+          ip: await getUserIpInDB(user?.username || ""),
+        };
+        await logAction(logobj);
         navigate("/collections");
       }
     } catch (err) {

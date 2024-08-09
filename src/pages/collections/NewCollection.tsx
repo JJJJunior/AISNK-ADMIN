@@ -4,11 +4,14 @@ import { CloseSquareOutlined, LoadingOutlined } from "@ant-design/icons";
 import { CollectionStatusType, CollectionType } from "../../lib/types";
 import { useNavigate } from "react-router-dom";
 import UploadImages from "../../components/UploadImages";
-import { addCollection, getCollectionStatus } from "../../lib/actions";
+import { addCollection, getCollectionStatus, logAction } from "../../lib/actions";
 import { FileListType } from "../../lib/types";
 import { UploadFile } from "antd/lib";
 import SortableList, { SortableItem } from "react-easy-sort";
 import arrayMoveImmutable from "array-move";
+import { useAuth } from "../../context/auth";
+import { LogType } from "../../lib/types";
+import { getUserIpInDB } from "../../lib/actions";
 
 const NewCollection: React.FC = () => {
   const [form] = Form.useForm();
@@ -16,6 +19,7 @@ const NewCollection: React.FC = () => {
   const [fileList, setFileList] = useState<FileListType[]>([]);
   const navigate = useNavigate();
   const [status, setStatus] = useState<CollectionStatusType[] | null>(null);
+  const { user } = useAuth();
 
   const onFinish = async (values: any) => {
     const newCollection: CollectionType = {
@@ -32,6 +36,13 @@ const NewCollection: React.FC = () => {
       const res = await addCollection(newCollection);
       if (res.status === 200) {
         message.success("创建栏目成功");
+        const logobj: LogType = {
+          user: user?.username || "",
+          type: "栏目管理",
+          info: user?.username + "创建了栏目:" + newCollection.title,
+          ip: await getUserIpInDB(user?.username || ""),
+        };
+        await logAction(logobj);
         navigate("/collections");
       }
     } catch (err) {

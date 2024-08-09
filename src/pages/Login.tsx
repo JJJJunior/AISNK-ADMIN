@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import type { FormProps } from "antd";
 import { Button, Form, Input } from "antd";
 import { message } from "antd/lib";
-import { login } from "../lib/actions.ts";
+import { login, getIpInDBIP, Loginlog } from "../lib/actions.ts";
 import { useNavigate } from "react-router-dom";
+import { LogType } from "../lib/types";
 
 type FieldType = {
   username?: string;
@@ -21,9 +22,21 @@ const App: React.FC = () => {
       const res = await login(values);
       if (res.status === 200) {
         message.success("登录成功");
-        // 用navigate有时候无法跳转
+        const obj = await getIpInDBIP();
+        // 用户登录 type不能改变字段 关联了数据库查询
+        const logObj: LogType = {
+          user: values.username || "",
+          ip: obj.ipAddress,
+          type: "用户登录",
+          info: "登录成功",
+          continent_code: obj.continentCode,
+          continent_name: obj.continentName,
+          country_code: obj.countryCode,
+          country_name: obj.countryName,
+          city: obj.city,
+        };
+        await Loginlog(logObj);
         navigrate("/");
-        //打包后会出现404，因为会以为有另外一个入口文件
       }
     } catch (err) {
       // console.log(err);

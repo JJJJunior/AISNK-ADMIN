@@ -7,20 +7,26 @@ import Loader from "../../components/Loader";
 import { getProducts, getCollections } from "../../lib/actions";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/auth";
+import { LogType } from "../../lib/types";
+import { logAction, getUserIpInDB } from "../../lib/actions";
 
 const Collections = () => {
   const [products, setProducts] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddColumns, setShowAddColumns] = useState(false);
   const [collections, setCollections] = useState<CollectionType[]>([]);
-  const [selectedProductIds, setSelectedProductIds] = useState([]);
-  const [selectedColIds, setSelectedColIds] = useState([]);
+  const [selectedPds, setSelectedPds] = useState<ProductType[]>([]);
+  const [selectedCols, setSelectedCols] = useState<CollectionType[]>([]);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const receiveDataFromChild = (productIds: []) => {
-    setSelectedProductIds(productIds);
+    const selectedProducts = productIds
+      .map((pid) => products.find((product: ProductType) => product.id === pid) || null)
+      .filter((product): product is ProductType => product !== null);
+    setSelectedPds(selectedProducts);
   };
-
   const fetchCollections = async () => {
     try {
       const res = await getCollections();
@@ -56,15 +62,14 @@ const Collections = () => {
   const handleProductConnectionToCollections = async () => {
     // TODO: 实现产品和栏目关联的逻辑
     const newData = {
-      product_ids: selectedProductIds,
-      collection_ids: selectedColIds,
+      product_ids: selectedPds.map((p) => p.id),
+      collection_ids: selectedCols.map((col) => col.id),
     };
 
     if (newData.collection_ids.length === 0) {
       message.warning("请先选择栏目");
       return;
     }
-
     // 发送请求到后台，实现产品和栏目关联
     // console.log(newData, "fasongshujudaohoutai");
     try {
@@ -72,6 +77,17 @@ const Collections = () => {
       const res = await axios.post("/products_on_collections", newData);
       if (res.status === 200) {
         message.success("产品上架栏目成功");
+        const logobj: LogType = {
+          user: user?.username || "",
+          type: "产品管理",
+          info:
+            user?.username +
+            `将产品:${selectedPds.map((p) => p.title).join(",")}批量上架了栏目:${selectedCols
+              .map((col) => col.title)
+              .join(",")}`,
+          ip: await getUserIpInDB(user?.username || ""),
+        };
+        await logAction(logobj);
         window.location.href = "/products";
       }
       // console.log(res.data.data);
@@ -83,9 +99,11 @@ const Collections = () => {
       setLoading(false);
     }
   };
-
   const handleSelected = (values: []) => {
-    setSelectedColIds(values);
+    const selectedCollections = values
+      .map((value) => collections.find((collection: CollectionType) => collection.id === value) || null)
+      .filter((collection): collection is CollectionType => collection !== null);
+    setSelectedCols(selectedCollections);
   };
   return loading ? (
     <Loader />

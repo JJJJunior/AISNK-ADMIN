@@ -1,8 +1,68 @@
 import axios from "axios";
-import { CollectionType, ProductType, UserType } from "./types";
+import { CollectionType, LogType, ProductType, UserType } from "./types";
+
+export const getIpInCloudflare = async () => {
+  try {
+    const res = await axios.get(import.meta.env.VITE_GET_IPADDRESS_Cloudflare, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: false,
+    });
+    // 提取 IP 地址
+    const ipMatch = res.data.match(/ip=([^\n]+)/);
+    const ipAddress = ipMatch ? ipMatch[1] : null;
+    return ipAddress;
+  } catch (err) {
+    // console.log("[getIp_GET]...", err);
+    return Promise.reject(err);
+  }
+};
+
+export const getIpInDBIP = async () => {
+  try {
+    const res = await axios.get(import.meta.env.VITE_CHECK_IPADDRESS_DBIP, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: false,
+    });
+    return res.data;
+  } catch (err) {
+    return Promise.reject(err);
+  }
+};
+
+export const Loginlog = async (message: LogType) => {
+  try {
+    return await axios.post("/log/login", message);
+  } catch (err) {
+    return Promise.reject(err);
+  }
+};
 
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 axios.defaults.withCredentials = true;
+
+export const getUserIpInDB = async (username: string) => {
+  try {
+    if (username === "" && username === undefined) {
+      return Promise.reject("Username is required.");
+    }
+    const res = await axios.get(`/user/ip/${username}`);
+    return res.data.ip;
+  } catch (err) {
+    return Promise.reject(err);
+  }
+};
+
+export const logAction = async (message: LogType) => {
+  try {
+    return await axios.post("/log", message);
+  } catch (err) {
+    return Promise.reject(err);
+  }
+};
 
 export const login = async (values: UserType) => {
   try {
@@ -144,6 +204,24 @@ export const getUsers = async () => {
     return await axios.get("/users");
   } catch (err) {
     // console.log("[getUsers_GET]...", err);
+    return Promise.reject(err);
+  }
+};
+
+export const getSystemLogs = async () => {
+  try {
+    return await axios.get("/logs");
+  } catch (err) {
+    return Promise.reject(err);
+  }
+};
+
+// 根据ip获取具体信息
+export const checkIpInfo = async (ip: string) => {
+  try {
+    const res = await axios.get(`/logs/${ip}`);
+    return res.data.ip_detail;
+  } catch (err) {
     return Promise.reject(err);
   }
 };
