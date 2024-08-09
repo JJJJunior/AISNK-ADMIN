@@ -39,6 +39,16 @@ const SystemLogs = () => {
       key: "ip",
     },
     {
+      title: "国家",
+      dataIndex: "country_name",
+      key: "country_name",
+    },
+    {
+      title: "城市",
+      dataIndex: "city",
+      key: "city",
+    },
+    {
       title: "详情",
       dataIndex: "info",
       key: "info",
@@ -67,7 +77,7 @@ const SystemLogs = () => {
   ];
   return (
     <div>
-      <Table dataSource={systemLogs} columns={columns} rowKey="ID" className="border shadow-lg" />;
+      <Table dataSource={systemLogs} columns={columns} rowKey="id" className="border shadow-lg" />;
     </div>
   );
 };

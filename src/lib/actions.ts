@@ -44,18 +44,6 @@ export const Loginlog = async (message: LogType) => {
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 axios.defaults.withCredentials = true;
 
-export const getUserIpInDB = async (username: string) => {
-  try {
-    if (username === "" && username === undefined) {
-      return Promise.reject("Username is required.");
-    }
-    const res = await axios.get(`/user/ip/${username}`);
-    return res.data.ip;
-  } catch (err) {
-    return Promise.reject(err);
-  }
-};
-
 export const logAction = async (message: LogType) => {
   try {
     return await axios.post("/log", message);

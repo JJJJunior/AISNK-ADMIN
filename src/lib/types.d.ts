@@ -1,17 +1,15 @@
 export interface LogType {
+  id: number;
   user: string;
   type: string;
   info: string;
   ip: string;
-  continent_code?: string;
-  continent_name?: string;
-  country_code?: string;
-  country_name?: string;
-  city?: string;
+  country_name: string;
+  city: string;
 }
 
 export interface UserType {
-  id: string;
+  id: number;
   username: string;
   password: string;
   role: string;
@@ -20,12 +18,12 @@ export interface UserType {
 }
 
 export interface CollectionStatusType {
-  id: string; // UUID
+  id: number;
   status: string | null;
 }
 
 export interface CollectionType {
-  id: string; // UUID
+  id: number;
   title: string;
   description: string;
   status: string;
@@ -36,12 +34,12 @@ export interface CollectionType {
 }
 
 export interface ProductStatusType {
-  id: string; // UUID
+  id: number;
   status: string;
 }
 
 export interface ProductType {
-  id: string; // UUID
+  id: number;
   title: string;
   code: string | null;
   description: string;
@@ -138,4 +136,13 @@ export interface ShippingAddressType {
   postalCode: string | null;
   country: string | null;
   order: OrderType;
+}
+
+export interface DBIPType {
+  ipAddress: string | null;
+  continentCode: string | null;
+  continentName: string | null;
+  countryCode: string | null;
+  countryName: string | null;
+  city: string | null;
 }

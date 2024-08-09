@@ -1,13 +1,9 @@
 import { useState, useEffect } from "react";
 import RegisterForm from "../components/RegisterForm.tsx";
-import { UserType } from "../lib/types";
-import { getUsers, resetPassword } from "../lib/actions.ts";
 import { Table, Popconfirm, Button, message } from "antd";
 import { useAuth } from "../context/auth.ts";
-import { deleteUser } from "../lib/actions.ts";
-import { LogType } from "../lib/types";
-import { getUserIpInDB } from "../lib/actions.ts";
-import { logAction } from "../lib/actions.ts";
+import { LogType, UserType } from "../lib/types";
+import { getIpInDBIP, logAction, deleteUser, getUsers, resetPassword } from "../lib/actions.ts";
 
 const Users = () => {
   const [users, setUsers] = useState<UserType[]>([]);
@@ -25,6 +21,8 @@ const Users = () => {
     fetchUsers();
   }, []);
 
+  console.log(user);
+
   const handleDelete = async (record: UserType) => {
     if (record.username === user?.username) {
       message.error("无法删除当前登录用户");
@@ -33,11 +31,14 @@ const Users = () => {
     try {
       const res = await deleteUser(Number(record.id));
       if (res.status === 200) {
+        const data = await getIpInDBIP();
         const logobj: LogType = {
           user: user?.username || "",
           type: "用户管理",
           info: user?.username + `删除了用户：${record.username}`,
-          ip: await getUserIpInDB(user?.username || ""),
+          ip: data.ipAddress || "",
+          country_name: data.countryName || "",
+          city: data.city || "",
         };
         await logAction(logobj);
         message.success("用户删除成功");
@@ -53,11 +54,14 @@ const Users = () => {
     try {
       const res = await resetPassword(Number(record.id));
       if (res.status === 200) {
+        const data = await getIpInDBIP();
         const logobj: LogType = {
           user: user?.username || "",
           type: "用户管理",
           info: user?.username + `重置了:${record.username}的密码`,
-          ip: await getUserIpInDB(user?.username || ""),
+          ip: data.ipAddress || "",
+          country_name: data.countryName || "",
+          city: data.city || "",
         };
         await logAction(logobj);
         message.success("密码重置成功");
@@ -132,7 +136,7 @@ const Users = () => {
   return (
     <div>
       <RegisterForm fetchUsers={fetchUsers} />
-      <Table dataSource={users} columns={columns} rowKey="ID" className="border shadow-lg" />;
+      <Table dataSource={users} columns={columns} rowKey="id" className="border shadow-lg" />;
     </div>
   );
 };

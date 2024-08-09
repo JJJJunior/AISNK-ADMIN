@@ -9,7 +9,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 import { LogType } from "../../lib/types";
-import { logAction, getUserIpInDB } from "../../lib/actions";
+import { logAction, getIpInDBIP } from "../../lib/actions";
 
 const Collections = () => {
   const [products, setProducts] = useState<ProductType[]>([]);
@@ -76,7 +76,7 @@ const Collections = () => {
       setLoading(true);
       const res = await axios.post("/products_on_collections", newData);
       if (res.status === 200) {
-        message.success("产品上架栏目成功");
+        const data = await getIpInDBIP();
         const logobj: LogType = {
           user: user?.username || "",
           type: "产品管理",
@@ -85,9 +85,12 @@ const Collections = () => {
             `将产品:${selectedPds.map((p) => p.title).join(",")}批量上架了栏目:${selectedCols
               .map((col) => col.title)
               .join(",")}`,
-          ip: await getUserIpInDB(user?.username || ""),
+          ip: data.ipAddress || "",
+          country_name: data.countryName || "",
+          city: data.city || "",
         };
         await logAction(logobj);
+        message.success("产品上架栏目成功");
         window.location.href = "/products";
       }
       // console.log(res.data.data);

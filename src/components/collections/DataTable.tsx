@@ -10,7 +10,7 @@ import { Image } from "antd";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 import { LogType } from "../../lib/types";
-import { logAction, getUserIpInDB } from "../../lib/actions";
+import { logAction, getIpInDBIP } from "../../lib/actions";
 
 type DataIndex = keyof CollectionType;
 
@@ -38,14 +38,17 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
     try {
       const res = await deleteCollection(Number(record.id));
       if (res.status === 200) {
-        message.success("删除成功");
+        const data = await getIpInDBIP();
         const logobj: LogType = {
           user: user?.username || "",
           type: "栏目管理",
           info: user?.username + "删除了栏目:" + record.title,
-          ip: await getUserIpInDB(user?.username || ""),
+          ip: data.ipAddress || "",
+          country_name: data.countryName || "",
+          city: data.city || "",
         };
         await logAction(logobj);
+        message.success("删除成功");
       }
     } catch (err) {
       // console.log(err);

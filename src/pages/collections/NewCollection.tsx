@@ -11,7 +11,7 @@ import SortableList, { SortableItem } from "react-easy-sort";
 import arrayMoveImmutable from "array-move";
 import { useAuth } from "../../context/auth";
 import { LogType } from "../../lib/types";
-import { getUserIpInDB } from "../../lib/actions";
+import { getIpInDBIP } from "../../lib/actions";
 
 const NewCollection: React.FC = () => {
   const [form] = Form.useForm();
@@ -36,11 +36,14 @@ const NewCollection: React.FC = () => {
       const res = await addCollection(newCollection);
       if (res.status === 200) {
         message.success("创建栏目成功");
+        const data = await getIpInDBIP();
         const logobj: LogType = {
           user: user?.username || "",
           type: "栏目管理",
           info: user?.username + "创建了栏目:" + newCollection.title,
-          ip: await getUserIpInDB(user?.username || ""),
+          ip: data.ipAddress || "",
+          country_name: data.countryName || "",
+          city: data.city || "",
         };
         await logAction(logobj);
         navigate("/collections");

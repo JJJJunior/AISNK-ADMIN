@@ -11,7 +11,7 @@ import SortableList, { SortableItem } from "react-easy-sort";
 import arrayMoveImmutable from "array-move";
 import { useAuth } from "../../context/auth";
 import { LogType } from "../../lib/types";
-import { getUserIpInDB, logAction } from "../../lib/actions";
+import { getIpInDBIP, logAction } from "../../lib/actions";
 
 const EditCollection = () => {
   const [form] = Form.useForm();
@@ -68,13 +68,16 @@ const EditCollection = () => {
       const res = await updateCollection(Number(collectionId), newCollection);
       if (res.status === 200) {
         message.success("修改栏目成功");
-        const logobj: LogType = {
+        const data = await getIpInDBIP();
+        const logObj: LogType = {
           user: user?.username || "",
           type: "栏目管理",
           info: user?.username + "修改了栏目:" + newCollection.title,
-          ip: await getUserIpInDB(user?.username || ""),
+          ip: data.ipAddress || "",
+          country_name: data.countryName || "",
+          city: data.city || "",
         };
-        await logAction(logobj);
+        await logAction(logObj);
         navigate("/collections");
       }
     } catch (err) {

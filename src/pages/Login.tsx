@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import type { FormProps } from "antd";
 import { Button, Form, Input } from "antd";
 import { message } from "antd/lib";
-import { login, getIpInDBIP, Loginlog } from "../lib/actions.ts";
+import { login, Loginlog } from "../lib/actions.ts";
 import { useNavigate } from "react-router-dom";
 import { LogType } from "../lib/types";
+import { getIpInDBIP } from "../lib/actions.ts";
 
 type FieldType = {
   username?: string;
@@ -22,18 +23,14 @@ const App: React.FC = () => {
       const res = await login(values);
       if (res.status === 200) {
         message.success("登录成功");
-        const obj = await getIpInDBIP();
-        // 用户登录 type不能改变字段 关联了数据库查询
+        const data = await getIpInDBIP();
         const logObj: LogType = {
           user: values.username || "",
-          ip: obj.ipAddress,
           type: "用户登录",
           info: "登录成功",
-          continent_code: obj.continentCode,
-          continent_name: obj.continentName,
-          country_code: obj.countryCode,
-          country_name: obj.countryName,
-          city: obj.city,
+          ip: data.ipAddress || "",
+          country_name: data.countryName || "",
+          city: data.city || "",
         };
         await Loginlog(logObj);
         navigrate("/");

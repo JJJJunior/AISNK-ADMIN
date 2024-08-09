@@ -9,7 +9,7 @@ import type { TableColumnsType } from "antd";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 import { LogType } from "../../lib/types";
-import { logAction, getUserIpInDB } from "../../lib/actions";
+import { logAction, getIpInDBIP } from "../../lib/actions";
 
 type DataIndex = keyof ProductType;
 
@@ -61,14 +61,17 @@ const DataTable: React.FC<DataTableProps> = ({
     try {
       const res = await deleteProduct(Number(record.id));
       if (res.status === 200) {
-        message.success("删除成功");
+        const data = await getIpInDBIP();
         const logobj: LogType = {
           user: user?.username || "",
           type: "产品管理",
           info: user?.username + "删除了产品:" + record.title,
-          ip: await getUserIpInDB(user?.username || ""),
+          ip: data.ipAddress || "",
+          country_name: data.countryName || "",
+          city: data.city || "",
         };
         await logAction(logobj);
+        message.success("删除成功");
       }
     } catch (err) {
       // console.log(err);

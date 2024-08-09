@@ -2,10 +2,8 @@ import React, { useState } from "react";
 import type { FormProps } from "antd";
 import { Button, Form, Input } from "antd";
 import { message } from "antd/lib";
-import { register } from "../lib/actions.ts";
+import { register, getIpInDBIP, logAction } from "../lib/actions.ts";
 import { LogType } from "../lib/types";
-import { getUserIpInDB } from "../lib/actions.ts";
-import { logAction } from "../lib/actions.ts";
 import { useAuth } from "../context/auth.ts";
 
 type FieldType = {
@@ -32,11 +30,14 @@ const App: React.FC<AppProps> = ({ fetchUsers }) => {
       setLoading(true);
       const res = await register(values);
       if (res.status === 200) {
+        const data = await getIpInDBIP();
         const logobj: LogType = {
           user: user?.username || "",
           type: "用户管理",
           info: user?.username + `创建了用户:${values.username}`,
-          ip: await getUserIpInDB(user?.username || ""),
+          ip: data.ipAddress || "",
+          country_name: data.countryName || "",
+          city: data.city || "",
         };
         await logAction(logobj);
         message.success("注册成功");

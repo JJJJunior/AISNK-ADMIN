@@ -14,7 +14,7 @@ import arrayMoveImmutable from "array-move";
 import UploadOne from "../../components/UploadOne";
 import { useAuth } from "../../context/auth";
 import { LogType } from "../../lib/types";
-import { logAction, getUserIpInDB } from "../../lib/actions";
+import { logAction, getIpInDBIP } from "../../lib/actions";
 
 const EditProduct: React.FC = () => {
   const [form] = Form.useForm();
@@ -100,14 +100,17 @@ const EditProduct: React.FC = () => {
     try {
       const res = await updateProduct(Number(productId), newProduct);
       if (res.status === 200) {
-        message.success("更新产品成功");
+        const data = await getIpInDBIP();
         const logobj: LogType = {
           user: user?.username || "",
           type: "产品管理",
           info: user?.username + "更新了产品:" + newProduct.title,
-          ip: await getUserIpInDB(user?.username || ""),
+          ip: data.ipAddress || "",
+          country_name: data.countryName || "",
+          city: data.city || "",
         };
         await logAction(logobj);
+        message.success("更新产品成功");
         navigate("/products");
       }
     } catch (err) {
