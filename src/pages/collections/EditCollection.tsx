@@ -56,6 +56,7 @@ const EditCollection = () => {
   const onFinish = async (values: any) => {
     const newCollection: CollectionType = {
       ...values,
+      title: values.title.trim(),
       fileList: fileList.map((file, index) => ({ ...file, order_index: index + 1 })),
     };
     if (newCollection.fileList.length === 0) {

@@ -154,6 +154,10 @@ const DataTable: React.FC<DataTableProps> = ({
         text
       ),
   });
+  const capitalizeFirstLetter = (str: string) => {
+    return str[0].toUpperCase() + str.slice(1);
+  };
+
   const columns: TableColumnsType<ProductType> = [
     {
       title: "产品名称",
@@ -188,7 +192,7 @@ const DataTable: React.FC<DataTableProps> = ({
         <div className="flex flex-col gap-1">
           {collections.map((collection) => (
             <p key={collection.id} className="text-sm border bg-blue-500 rounded-md text-white">
-              {collection.title}
+              {capitalizeFirstLetter(collection.title.toLowerCase())}
             </p>
           ))}
         </div>

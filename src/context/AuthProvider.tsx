@@ -1,6 +1,6 @@
 import React, { createContext, ReactNode, useEffect, useState } from "react";
 import { UserType } from "../lib/types";
-import { useCookies } from "react-cookie";
+import { Cookies, useCookies } from "react-cookie";
 import { validate } from "../lib/actions.ts";
 import { useNavigate } from "react-router-dom";
 
