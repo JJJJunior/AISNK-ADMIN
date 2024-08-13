@@ -148,6 +148,11 @@ const DataTable: React.FC<DataTableProps> = ({ dataSource, fetchCollections }) =
       ),
     },
     {
+      title: "栏目排序",
+      dataIndex: "order_index",
+      key: "order_index",
+    },
+    {
       title: "栏目描述",
       dataIndex: "description",
       key: "description",

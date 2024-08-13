@@ -25,6 +25,7 @@ export interface CollectionStatusType {
 export interface CollectionType {
   id: number;
   title: string;
+  order_index: number;
   description: string;
   status: string;
   products: ProductType[];

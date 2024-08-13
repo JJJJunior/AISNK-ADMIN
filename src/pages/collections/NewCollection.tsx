@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Form, Input, Spin, message, Select } from "antd";
+import { Button, Form, Input, Spin, message, Select, InputNumber } from "antd";
 import { CloseSquareOutlined, LoadingOutlined } from "@ant-design/icons";
 import { CollectionStatusType, CollectionType } from "../../lib/types";
 import { useNavigate } from "react-router-dom";
@@ -24,6 +24,7 @@ const NewCollection: React.FC = () => {
   const onFinish = async (values: any) => {
     const newCollection: CollectionType = {
       ...values,
+      order_index: values.order_index === undefined ? 999 : values.order_index,
       title: values.title.trim(),
       fileList: fileList.map((file, index) => ({ ...file, order_index: index + 1 })),
     };
@@ -89,6 +90,9 @@ const NewCollection: React.FC = () => {
       <Form form={form} onFinish={onFinish} layout="vertical">
         <Form.Item label="栏目名称" name="title" rules={[{ required: true, message: "栏目名称不能为空" }]}>
           <Input />
+        </Form.Item>
+        <Form.Item label="栏目排序" name="order_index">
+          <InputNumber min={1} />
         </Form.Item>
         <Form.Item label="栏目图片" valuePropName="点击上传图片">
           <UploadImages setFileList={setFileList} fileList={fileList} />
